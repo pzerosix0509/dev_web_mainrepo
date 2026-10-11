@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1728100000001",
+    "name": "Nguyễn Văn An",
+    "email": "an.nguyen@example.com"
+  },
+  {
+    "id": "1728100000002",
+    "name": "Trần Thị Bình",
+    "email": "binh.tran@example.com"
+  },
+  {
+    "id": "1728100000003",
+    "name": "Lê Hoàng Cường",
+    "email": "cuong.le@example.com"
+  },
+  {
+    "id": "1791164915108",
+    "name": "Tuan Van",
+    "email": "tdpus06@gmail.com"
+  },
+  {
+    "id": "1791166904808",
+    "name": "Duy Phu",
+    "email": "tdp@dev.com"
+  }
+]

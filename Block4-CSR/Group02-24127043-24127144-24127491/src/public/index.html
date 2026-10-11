@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TDP // Student Directory (CSR React)</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'shake': 'shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(6px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            shake: {
+              '10%, 90%': { transform: 'translateX(-2px)' },
+              '20%, 80%': { transform: 'translateX(3px)' },
+              '30%, 50%, 70%': { transform: 'translateX(-4px)' },
+              '40%, 60%': { transform: 'translateX(4px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .blueprint-grid {
+      background-size: 40px 40px;
+      background-image:
+        linear-gradient(to right, rgba(39, 39, 42, 0.45) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(39, 39, 42, 0.45) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="bg-black text-zinc-100 font-sans min-h-screen selection:bg-indigo-600 selection:text-white flex flex-col antialiased">
+  <!--
+    CSR HTML SHELL:
+    View Page Source only contains <div id="root"></div>.
+    JavaScript (React 18) executes in the browser, initializes state, and renders the DOM.
+  -->
+  <div id="root" class="flex-1 flex flex-col"></div>
+
+  <!-- React 18 (Development builds for React DevTools inspection) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- CSR Application Modules (Seed -> Child Components -> State Owner App) -->
+  <script src="/js/seed.js"></script>
+  <script src="/js/components/StudentRow.js"></script>
+  <script src="/js/components/StudentList.js"></script>
+  <script src="/js/components/AddStudentForm.js"></script>
+  <script src="/js/components/StateInspector.js"></script>
+  <script src="/js/app-csr.js"></script>
+</body>
+</html>
