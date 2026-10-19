@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Dish {
+  id          Int              @id @default(autoincrement())
+  name        String
+  description String
+  price       Int
+  category    String
+  available   Boolean          @default(true)
+  chefId      Int
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  chef        Chef             @relation(fields: [chefId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  ingredients DishIngredient[]
+  @@index([chefId])
+}
+
+model Chef {
+  id        Int      @id @default(autoincrement())
+  name      String
+  specialty String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dishes    Dish[]
+}
+
+model Ingredient {
+  id        Int              @id @default(autoincrement())
+  name      String
+  unit      String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  dishes    DishIngredient[]
+}
+
+model DishIngredient {
+  dishId       Int
+  ingredientId Int
+  dish         Dish       @relation(fields: [dishId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  @@id([dishId, ingredientId])
+  @@index([ingredientId])
+}
