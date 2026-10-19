@@ -1,0 +1,10 @@
+import { createBrowserRouter } from 'react-router-dom';
+import { AppLayout } from '../layouts/AppLayout';
+import { HomePage } from '../features/home/HomePage';
+import { MenuPage } from '../features/menu/MenuPage';
+import { DishDetailPage } from '../features/menu/DishDetailPage';
+import { EntityPage } from '../features/admin/EntityPage';
+import { EntityFormPage } from '../features/admin/EntityFormPage';
+import { DishesPage } from '../features/admin/DishesPage';
+import { DishFormPage } from '../features/admin/DishFormPage';
+export const router = createBrowserRouter([{ path: '/', element: <AppLayout />, children: [{ index: true, element: <HomePage /> }, { path: 'menu', element: <MenuPage /> }, { path: 'menu/:id', element: <DishDetailPage /> }, { path: 'admin/dishes', element: <DishesPage /> }, { path: 'admin/dishes/new', element: <DishFormPage /> }, { path: 'admin/dishes/:id/edit', element: <DishFormPage /> }, { path: 'admin/chefs', element: <EntityPage kind="chefs" /> }, { path: 'admin/chefs/new', element: <EntityFormPage kind="chefs" /> }, { path: 'admin/chefs/:id/edit', element: <EntityFormPage kind="chefs" /> }, { path: 'admin/ingredients', element: <EntityPage kind="ingredients" /> }, { path: 'admin/ingredients/new', element: <EntityFormPage kind="ingredients" /> }, { path: 'admin/ingredients/:id/edit', element: <EntityFormPage kind="ingredients" /> }, { path: '*', element: <section className="page"><h1>404</h1><p>Trang không tồn tại.</p></section> }] }]);
