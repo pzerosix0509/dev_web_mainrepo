@@ -1,0 +1,12 @@
+{
+  "name": "restaurant-block6",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "npx --prefix backend tsx tests/block6.test.js",
+    "dev": "npm --prefix backend run dev",
+    "dev:web": "npm --prefix frontend run dev",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:web\""
+  }
+}

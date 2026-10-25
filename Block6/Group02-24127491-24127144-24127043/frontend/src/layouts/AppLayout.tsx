@@ -1,0 +1,24 @@
+import { NavLink, Outlet } from 'react-router-dom';
+
+export function AppLayout() {
+  return (
+    <>
+      <header>
+        <div className="topbar">Restaurantly · 18 năm phục vụ tinh hoa ẩm thực</div>
+        <nav>
+          <NavLink className="logo" to="/">Restaurantly.</NavLink>
+          <div className="navlinks">
+            <NavLink to="/dishes">Thực đơn</NavLink>
+            <NavLink to="/admin/dishes">Món ăn</NavLink>
+            <NavLink to="/admin/chefs">Đầu bếp</NavLink>
+            <NavLink to="/admin/ingredients">Nguyên liệu</NavLink>
+          </div>
+        </nav>
+      </header>
+      <main>
+        <Outlet />
+      </main>
+      <footer>© Restaurantly · Dark & Gold Luxury</footer>
+    </>
+  );
+}
