@@ -1,0 +1,2 @@
+export const errorMessages: Record<string, string> = { VALIDATION_FAILED: 'Dữ liệu nhập chưa hợp lệ.', NOT_FOUND: 'Không tìm thấy dữ liệu.', INVALID_ID: 'Mã dữ liệu không hợp lệ.', CONFLICT: 'Dữ liệu đang được sử dụng, không thể xóa.', ALREADY_EXISTS: 'Dữ liệu đã tồn tại.', NETWORK_ERROR: 'Không thể kết nối đến máy chủ API hoặc do lỗi cấu hình CORS', HTTP_ERROR: 'Máy chủ API trả về lỗi.' };
+export function displayError(code: string) { return errorMessages[code] ?? 'Đã xảy ra lỗi. Vui lòng thử lại.'; }
