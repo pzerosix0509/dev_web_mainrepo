@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api, ApiServiceError } from '../../services/apiService';
 import { Dish } from '../../types/api';
 import { EmptyState, ErrorState, LoadingState } from '../../components/States';
 import { useLoading } from '../../app/loading';
 import { NumberedPagination } from '../../components/PaginationControls';
+
+type SortField = 'id' | 'name' | 'price';
+type SortDirection = 'asc' | 'desc';
 
 export function DishesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,6 +20,8 @@ export function DishesPage() {
   const [error, setError] = useState<ApiServiceError>();
   const [loading, setLocalLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(qParam);
+  const [sortField, setSortField] = useState<SortField>('id');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const { setLoading } = useLoading();
 
   useEffect(() => {
@@ -73,6 +78,29 @@ export function DishesPage() {
     setSearchParams(next);
   };
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedItems = useMemo(() => {
+    return [...items].sort((a, b) => {
+      let cmp = 0;
+      if (sortField === 'id') {
+        cmp = a.id - b.id;
+      } else if (sortField === 'name') {
+        cmp = a.name.localeCompare(b.name, 'vi');
+      } else if (sortField === 'price') {
+        cmp = a.price - b.price;
+      }
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }, [items, sortField, sortDirection]);
+
   return (
     <section className="page admin-page">
       <div className="page-title">
@@ -115,7 +143,7 @@ export function DishesPage() {
         <LoadingState />
       ) : error ? (
         <ErrorState code={error.apiError.code} />
-      ) : items.length === 0 ? (
+      ) : sortedItems.length === 0 ? (
         <EmptyState text="Không có món ăn nào trong trang này." />
       ) : (
         <>
@@ -123,18 +151,36 @@ export function DishesPage() {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Món ăn</th>
+                  <th
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                    onClick={() => handleSort('id')}
+                    title="Bấm để sắp xếp theo ID"
+                  >
+                    ID {sortField === 'id' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'}
+                  </th>
+                  <th
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                    onClick={() => handleSort('name')}
+                    title="Bấm để sắp xếp theo tên"
+                  >
+                    Món ăn {sortField === 'name' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'}
+                  </th>
                   <th>Danh mục</th>
                   <th>Chef</th>
                   <th>Nguyên liệu</th>
-                  <th>Giá bán</th>
+                  <th
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                    onClick={() => handleSort('price')}
+                    title="Bấm để sắp xếp theo giá"
+                  >
+                    Giá bán {sortField === 'price' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'}
+                  </th>
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
-                {items.map((dish) => (
+                {sortedItems.map((dish) => (
                   <tr key={dish.id}>
                     <td>#{dish.id}</td>
                     <td>

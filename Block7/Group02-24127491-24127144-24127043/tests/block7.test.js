@@ -585,8 +585,9 @@ async function main() {
 
     // Test 15: SPA Security & Deep link checks
     await runTest('Test 15: SPA Security Checks (no secrets leak)', async () => {
-      const indexPath = path.resolve('frontend/index.html');
-      assert(fs.existsSync(indexPath), 'frontend/index.html must exist');
+      const candidates = [path.resolve('frontend/index.html'), path.resolve('../frontend/index.html')];
+      const indexPath = candidates.find((p) => fs.existsSync(p));
+      assert(indexPath, 'frontend/index.html must exist');
       const content = fs.readFileSync(indexPath, 'utf-8');
       assert(!content.includes('DATABASE_URL'), 'index.html must not contain DATABASE_URL');
       assert(!content.includes('postgres'), 'index.html must not contain postgres credentials');
