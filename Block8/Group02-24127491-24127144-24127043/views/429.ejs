@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+
+<section class="py-20 bg-[#0c0b09]">
+  <div class="container mx-auto px-4 max-w-lg text-center">
+    <div class="bg-[#1a1814] border border-amber-500/40 rounded-2xl p-10 shadow-2xl">
+      <div class="font-serif text-6xl sm:text-7xl font-bold text-amber-400 mb-4">429</div>
+      <h1 class="text-2xl font-serif text-white mb-3">
+        <%= typeof title !== 'undefined' ? title : '429 - Quá Giới Hạn Yêu Cầu (Too Many Requests)' %>
+      </h1>
+      <p class="text-xs sm:text-sm text-[#bab8b2] mb-8 leading-relaxed">
+        <%= typeof message !== 'undefined' ? message : 'RATE_LIMITED: Bạn đã thực hiện quá số lần thử cho phép trong khoảng thời gian ngắn. Hệ thống tạm thời khóa thao tác này, vui lòng thử lại sau ít phút.' %>
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/login" class="btn btn-gold text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full">
+          &larr; Quay Lại Đăng Nhập
+        </a>
+        <a href="/" class="btn btn-outline-gold text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full">
+          Về Trang Chủ
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

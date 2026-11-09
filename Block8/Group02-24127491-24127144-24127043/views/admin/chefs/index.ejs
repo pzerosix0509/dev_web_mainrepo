@@ -1,0 +1,69 @@
+<%- include('../../partials/header') %>
+
+<section class="py-12 bg-[#0c0b09]">
+  <div class="container mx-auto px-4">
+    
+    <!-- Tiêu đề & Nút thêm mới -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-[#cda45e] font-semibold">BẢNG ĐIỀU KHIỂN QUẢN TRỊ</span>
+        <h1 class="text-3xl font-serif text-white mt-1">Đội Ngũ Đầu Bếp (Chefs)</h1>
+      </div>
+      <a href="/admin/chefs/new" class="btn btn-gold text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full shadow-lg">
+        + Thêm Đầu Bếp Mới
+      </a>
+    </div>
+
+    <!-- Bảng danh sách Đầu Bếp -->
+    <div class="bg-[#1a1814] border border-[#cda45e]/20 rounded-xl overflow-hidden shadow-2xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-[#12100d] border-b border-[#cda45e]/30 text-[#cda45e] font-serif text-xs uppercase tracking-wider">
+              <th class="py-4 px-6" style="width: 100px;">ID</th>
+              <th class="py-4 px-6">Họ Và Tên</th>
+              <th class="py-4 px-6">Chuyên Môn Ẩm Thực</th>
+              <th class="py-4 px-6 text-right" style="width: 180px;">Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#28251f] text-sm text-[#bab8b2]">
+            <% if (chefs.length === 0) { %>
+              <tr>
+                <td colspan="4" class="py-8 text-center text-[#7f7c75]">
+                  Chưa có thông tin đầu bếp nào trong hệ thống.
+                </td>
+              </tr>
+            <% } else { %>
+              <% chefs.forEach(chef => { %>
+                <tr class="hover:bg-white/[0.02] transition">
+                  <td class="py-4 px-6 font-mono text-xs text-[#cda45e]">#<%= chef.id %></td>
+                  <td class="py-4 px-6">
+                    <span class="font-serif font-bold text-white text-base block">
+                      👨‍🍳 <%= chef.name %>
+                    </span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-xs text-[#cda45e] bg-[#cda45e]/10 border border-[#cda45e]/20 px-3 py-1 rounded-full">
+                      <%= chef.specialty %>
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-right whitespace-nowrap">
+                    <a href="/admin/chefs/<%= chef.id %>/edit" class="btn btn-outline-gold btn-sm mr-2 text-xs">
+                      Sửa
+                    </a>
+                    <a href="/admin/chefs/<%= chef.id %>/delete" class="btn btn-danger btn-sm text-xs">
+                      Xóa
+                    </a>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

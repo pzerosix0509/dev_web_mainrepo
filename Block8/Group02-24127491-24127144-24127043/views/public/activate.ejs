@@ -1,0 +1,133 @@
+<%- include('../partials/header') %>
+
+<section class="py-16 bg-[#0c0b09] min-h-[calc(100vh-160px)] flex items-center justify-center">
+  <div class="container mx-auto px-4 max-w-md">
+    
+    <!-- Header trang Kích hoạt OTP -->
+    <div class="text-center mb-8">
+      <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">XÁC MINH HỘP THƯ</span>
+      <h1 class="text-3xl sm:text-4xl font-serif text-white mt-1">Kích Hoạt Tài Khoản</h1>
+      <p class="text-xs text-[#8c8983] mt-2">
+        Nhập mã OTP gồm 6 chữ số đã được gửi tới địa chỉ email của bạn để chuyển trạng thái tài khoản sang <strong>active</strong>.
+      </p>
+    </div>
+
+    <!-- Thông báo chung (sau khi đăng ký hoặc gửi lại OTP) -->
+    <% if (typeof infoMessage !== 'undefined' && infoMessage) { %>
+      <div class="bg-emerald-500/10 border border-emerald-500/40 rounded-lg p-4 mb-6 text-xs text-emerald-300 leading-relaxed flex items-start gap-2">
+        <span class="text-base">📬</span>
+        <span><%= infoMessage %></span>
+      </div>
+    <% } %>
+
+    <!-- Thông báo lỗi (INVALID_OTP) -->
+    <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+      <div class="bg-red-500/10 border border-red-500/40 rounded-lg p-4 mb-6 text-sm text-red-300">
+        <div class="font-semibold flex items-center gap-2 mb-1 text-red-200">
+          <span>⚠️</span> Kích hoạt không thành công:
+        </div>
+        <ul class="list-disc list-inside space-y-1 text-xs">
+          <% errors.forEach(err => { %>
+            <li><%= err %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <!-- Card Form Xác nhận OTP (POST /activate) -->
+    <div class="bg-[#1a1814] border border-[#cda45e]/25 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-28 h-28 bg-[#cda45e]/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <form action="/activate" method="POST" class="space-y-5">
+        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+
+        <!-- Địa chỉ Email cần kích hoạt -->
+        <div>
+          <label for="email" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Địa Chỉ Email <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value="<%= typeof email !== 'undefined' && email ? email : '' %>"
+            placeholder="tenban@example.com"
+            required
+            oninput="syncResendEmail(this.value)"
+            class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#cda45e] text-sm transition"
+          >
+        </div>
+
+        <!-- Mã OTP 6 chữ số -->
+        <div>
+          <label for="otp" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Mã OTP (6 Chữ Số) <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            id="otp"
+            name="otp"
+            maxlength="6"
+            pattern="\d{6}"
+            inputmode="numeric"
+            placeholder="123456"
+            required
+            autocomplete="one-time-code"
+            class="w-full bg-[#151410] border border-[#28251f] text-[#cda45e] font-mono text-2xl tracking-[10px] text-center px-4 py-3.5 rounded-lg focus:outline-none focus:border-[#cda45e] transition"
+          >
+          <p class="text-[11px] text-[#7f7c75] mt-1.5">
+            Mã OTP chỉ dùng một lần, có hạn 10 phút và giới hạn tối đa 5 lần nhập sai.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full btn btn-gold text-xs uppercase tracking-widest font-bold py-3.5 rounded-lg shadow-lg hover:shadow-[#cda45e]/20 transition duration-300"
+        >
+          Xác Nhận Mã OTP
+        </button>
+      </form>
+
+      <!-- Form Gửi lại mã OTP (POST /activate/resend) -->
+      <div class="border-t border-[#28251f] mt-6 pt-5">
+        <form action="/activate/resend" method="POST" class="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+          <input
+            type="hidden"
+            id="resendEmailInput"
+            name="email"
+            value="<%= typeof email !== 'undefined' && email ? email : '' %>"
+          >
+          <span class="text-xs text-[#8c8983]">Chưa nhận được hoặc mã đã hết hạn?</span>
+          <button
+            type="submit"
+            class="text-xs text-[#cda45e] hover:text-white border border-[#cda45e]/40 hover:bg-[#cda45e]/10 px-4 py-2 rounded-lg font-medium transition whitespace-nowrap"
+          >
+            📩 Gửi Lại Mã OTP
+          </button>
+        </form>
+        <p class="text-[10px] text-[#6e6b65] mt-2">
+          Lưu ý: Thời gian chờ giữa hai lần gửi lại là 60 giây. Việc gửi lại mã mới sẽ hủy mã cũ nhưng không đặt lại bộ đếm số lần nhập sai.
+        </p>
+      </div>
+
+      <div class="border-t border-[#28251f] mt-5 pt-4 text-center">
+        <a href="/login" class="text-xs text-[#cda45e] hover:underline font-medium">
+          &larr; Quay lại trang Đăng Nhập
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  function syncResendEmail(val) {
+    const resendInput = document.getElementById('resendEmailInput');
+    if (resendInput) {
+      resendInput.value = val;
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

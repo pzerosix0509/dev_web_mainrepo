@@ -1,0 +1,101 @@
+<%- include('../partials/header') %>
+
+<section class="py-16 bg-[#0c0b09]">
+  <div class="container mx-auto px-4">
+    <div class="section-header text-center sm:text-left mb-8">
+      <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">MENU</span>
+      <h1 class="section-title text-3xl sm:text-4xl font-serif text-white">Check Our Tasty Menu</h1>
+    </div>
+
+    <div class="bg-[#1a1814] border border-[#cda45e]/20 rounded-lg p-4 sm:p-6 mb-12">
+      <form action="/menu" method="GET" class="flex flex-col sm:flex-row gap-3">
+        <input
+          type="text"
+          name="q"
+          placeholder="Tìm món ăn yêu thích (vd: Phở, Bò Wagyu, Tôm hùm)..."
+          value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+          class="flex-1 bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+        >
+        <button type="submit" class="btn btn-gold text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-md">
+          Tìm Kiếm
+        </button>
+        <% if (searchQuery) { %>
+          <a href="/menu" class="btn btn-secondary text-xs uppercase tracking-wider font-semibold px-5 py-3 rounded-md text-center">
+            Xóa Lọc
+          </a>
+        <% } %>
+      </form>
+
+      <% if (searchQuery) { %>
+        <p class="text-xs text-[#cda45e] mt-3">
+          Kết quả tìm kiếm cho từ khóa: <strong>"<%= searchQuery %>"</strong> (<%= dishes.length %> món tìm thấy)
+        </p>
+      <% } %>
+    </div>
+
+    <% if (dishes.length === 0) { %>
+      <div class="text-center py-16 bg-[#1a1814] border border-[#28251f] rounded-lg">
+        <p class="text-lg text-[#bab8b2] mb-4">Hiện không tìm thấy món ăn nào phù hợp với yêu cầu của bạn.</p>
+        <a href="/menu" class="btn btn-gold text-xs uppercase tracking-wider px-6 py-2.5 rounded-full">
+          Xem Tất Cả Món Ăn
+        </a>
+      </div>
+    <% } else { %>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
+        <% const sampleImages = [
+          'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=160&q=80',
+          'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=160&q=80',
+          'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38c?auto=format&fit=crop&w=160&q=80',
+          'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=160&q=80',
+          'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=160&q=80',
+          'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=160&q=80'
+        ]; %>
+
+        <% dishes.forEach((dish, index) => { %>
+          <div class="flex items-start gap-4 pb-4 group">
+            <img
+              src="<%= sampleImages[index % sampleImages.length] %>"
+              alt="<%= dish.name %>"
+              class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-white/20 flex-shrink-0 group-hover:border-[#cda45e] transition"
+            >
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline justify-between gap-2">
+                <a href="/menu/<%= dish.id %>" class="font-serif text-base sm:text-lg font-bold text-white hover:text-[#cda45e] transition truncate">
+                  <%= dish.name %>
+                </a>
+                <span class="flex-1 border-b border-dotted border-white/20 relative -top-1 mx-2"></span>
+                <span class="font-bold text-[#cda45e] text-base whitespace-nowrap">
+                  <%= Number(dish.price).toLocaleString('vi-VN') %> đ
+                </span>
+              </div>
+
+              <p class="text-xs sm:text-sm italic text-[#bab8b2]/80 mt-1 line-clamp-2">
+                <%= dish.description %>
+              </p>
+
+              <div class="flex items-center gap-2 mt-2">
+                <span class="text-[10px] uppercase tracking-wider text-[#cda45e] bg-[#cda45e]/10 border border-[#cda45e]/30 px-2 py-0.5 rounded">
+                  <%= dish.category %>
+                </span>
+                <% if (dish.available) { %>
+                  <span class="text-[10px] uppercase tracking-wider text-green-400 bg-green-500/10 border border-green-500/30 px-2 py-0.5 rounded">
+                    Còn Món
+                  </span>
+                <% } else { %>
+                  <span class="text-[10px] uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded">
+                    Tạm Hết
+                  </span>
+                <% } %>
+                <a href="/menu/<%= dish.id %>" class="ml-auto text-xs text-white/60 hover:text-[#cda45e] transition">
+                  Chi tiết &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

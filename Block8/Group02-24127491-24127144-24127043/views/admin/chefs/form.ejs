@@ -1,0 +1,80 @@
+<%- include('../../partials/header') %>
+
+<section class="py-12 bg-[#0c0b09]">
+  <div class="container mx-auto px-4 max-w-xl">
+    
+    <div class="mb-8">
+      <a href="/admin/chefs" class="text-xs uppercase tracking-wider text-[#cda45e] hover:underline mb-2 inline-block">
+        &larr; Quay lại danh sách đầu bếp
+      </a>
+      <h1 class="text-3xl font-serif text-white">
+        <%= isEdit ? 'Chỉnh Sửa Đầu Bếp #' + values.id : 'Thêm Đầu Bếp Mới' %>
+      </h1>
+      <p class="text-xs text-[#7f7c75] mt-1">
+        Thông tin hồ sơ năng lực và chuyên môn của Master Chef
+      </p>
+    </div>
+
+    <!-- Khối hiển thị lỗi 400 -->
+    <% if (errors && errors.length > 0) { %>
+      <div class="bg-red-500/10 border border-red-500/40 rounded-lg p-5 mb-8 text-sm text-red-300">
+        <div class="font-bold flex items-center gap-2 mb-2 text-red-200">
+          <span>⚠️</span> Vui lòng kiểm tra lại:
+        </div>
+        <ul class="list-disc list-inside space-y-1 text-xs">
+          <% errors.forEach(err => { %>
+            <li><%= err %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <div class="bg-[#1a1814] border border-[#cda45e]/25 rounded-xl p-8 shadow-2xl">
+      <form action="<%= isEdit ? '/admin/chefs/' + values.id + '?_method=PATCH' : '/admin/chefs' %>" method="POST" class="space-y-6">
+        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+        
+        <div>
+          <label for="name" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Họ Và Tên Đầu Bếp <span class="text-red-400">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            value="<%= values.name || '' %>" 
+            placeholder="Ví dụ: Gordon Ramsay, Trần Thị Kim Mai..." 
+            required
+            class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+          >
+        </div>
+
+        <div>
+          <label for="specialty" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Chuyên Môn / Sở Trường Ẩm Thực <span class="text-red-400">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="specialty" 
+            name="specialty" 
+            value="<%= values.specialty || '' %>" 
+            placeholder="Ví dụ: Bếp trưởng món Á & Hải sản, Bếp bánh hoàng gia..." 
+            required
+            class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+          >
+        </div>
+
+        <div class="pt-6 border-t border-[#28251f] flex items-center gap-4">
+          <button type="submit" class="btn btn-gold text-xs uppercase tracking-wider font-semibold px-8 py-3 rounded-full">
+            <%= isEdit ? 'Lưu Cập Nhật (PATCH)' : 'Thêm Đầu Bếp (POST)' %>
+          </button>
+          <a href="/admin/chefs" class="btn btn-secondary text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full">
+            Hủy Bỏ
+          </a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Restaurantly - Ẩm Thực Thượng Hạng' %></title>
+  
+  <!-- Google Fonts: Playfair Display & Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              DEFAULT: '#cda45e',
+              light: '#d9ba85',
+              dark: '#b38b46'
+            },
+            dark: {
+              bg: '#0c0b09',
+              card: '#1a1814',
+              elevated: '#151410',
+              border: '#28251f'
+            }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Poppins"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Restaurantly Luxury Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-[#0c0b09] text-[#bab8b2] min-h-screen flex flex-col font-sans">
+
+  <!-- Header Navigation -->
+  <header class="header-nav sticky top-0 z-50 bg-[#0c0b09]/95 backdrop-blur-md border-b border-[#28251f]">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      
+      <!-- Logo thương hiệu -->
+      <div class="flex items-center shrink-0">
+        <a href="/" class="brand-logo text-2xl lg:text-3xl font-serif text-white tracking-wider">
+          Restaurantly<span class="text-[#cda45e]">.</span>
+        </a>
+      </div>
+
+      <%# Navigation Menu %>
+      <nav class="flex items-center space-x-3 sm:space-x-5 lg:space-x-7 flex-wrap">
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+          <%# ================= NAVIGATION BAR KHI ĐÃ ĐĂNG NHẬP ================= %>
+          <a href="/home" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide <%= typeof currentPath !== 'undefined' && (currentPath === '/' || currentPath === '/home') ? '!text-[#cda45e]' : '' %>">
+            Trang Chủ
+          </a>
+          <a href="/menu" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide <%= typeof currentPath !== 'undefined' && currentPath.startsWith('/menu') ? '!text-[#cda45e]' : '' %>">
+            Thực Đơn
+          </a>
+          <a href="/admin/dishes" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide <%= typeof currentPath !== 'undefined' && currentPath.startsWith('/admin/dishes') && !currentPath.includes('/new') ? '!text-[#cda45e]' : '' %>">
+            Quản Lý Món
+          </a>
+          <a href="/admin/chefs" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide <%= typeof currentPath !== 'undefined' && currentPath.startsWith('/admin/chefs') ? '!text-[#cda45e]' : '' %>">
+            Đầu Bếp
+          </a>
+          <a href="/admin/ingredients" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide <%= typeof currentPath !== 'undefined' && currentPath.startsWith('/admin/ingredients') ? '!text-[#cda45e]' : '' %>">
+            Nguyên Liệu
+          </a>
+          <a href="/admin/dishes/new" class="btn-book hidden sm:inline-block text-xs !py-1.5 !px-3.5">
+            + Thêm Món
+          </a>
+        <% } else { %>
+          <%# ================= NAVIGATION BAR TRANG LANDING PAGE (CHƯA ĐĂNG NHẬP) ================= %>
+          <a href="/#about" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide">
+            Giới Thiệu
+          </a>
+          <a href="/#specials" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide">
+            Giá Trị Tinh Hoa
+          </a>
+          <a href="/#highlights" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide">
+            Món Đặc Trưng
+          </a>
+        <% } %>
+      </nav>
+
+      <%# ================= KHU VỰC ĐĂNG NHẬP / ĐĂNG KÝ / ĐĂNG XUẤT ================= %>
+      <div class="flex items-center space-x-3 sm:space-x-4 shrink-0 ml-auto md:ml-0">
+        <div class="h-4 w-[1px] bg-[#28251f] hidden sm:block"></div>
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+          <span class="text-xs text-[#cda45e] font-medium hidden sm:inline-block">
+            👤 <%= currentUser.name %> <span class="text-[10px] text-[#8c8983]">(<%= currentUser.role %>)</span>
+          </span>
+          <form action="/logout" method="POST" class="inline m-0">
+            <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+            <button type="submit" class="btn btn-outline-gold text-xs uppercase tracking-wider !py-1.5 !px-4 rounded-full whitespace-nowrap cursor-pointer">
+              Đăng Xuất
+            </button>
+          </form>
+        <% } else { %>
+          <a href="/login" class="text-white hover:text-[#cda45e] transition text-sm font-medium tracking-wide whitespace-nowrap">
+            Đăng Nhập
+          </a>
+          <a href="/register" class="btn btn-outline-gold text-xs uppercase tracking-wider !py-1.5 !px-4 rounded-full whitespace-nowrap">
+            Đăng Ký
+          </a>
+        <% } %>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="content-area flex-1">

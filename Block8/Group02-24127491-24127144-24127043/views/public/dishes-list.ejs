@@ -1,0 +1,173 @@
+<%- include('../partials/header') %>
+
+<!-- HERO SECTION (Theo đúng Hình ảnh 1) -->
+<section class="hero-section relative bg-[#0c0b09] py-20 lg:py-28 border-b border-[#28251f]">
+  <div class="container mx-auto px-4">
+    <div class="max-w-2xl">
+      <h1 class="hero-title text-4xl sm:text-5xl lg:text-6xl font-serif text-white leading-tight mb-4">
+        Welcome to <span class="text-[#cda45e]">Restaurantly</span>
+      </h1>
+      <p class="hero-subtitle text-lg sm:text-xl text-[#bab8b2] mb-8 font-light">
+        Delivering great food for more than 18 years! Tinh hoa ẩm thực thượng hạng được chế biến từ những đầu bếp hàng đầu thế giới.
+      </p>
+      <div class="hero-buttons flex flex-wrap gap-4">
+        <a href="#menu" class="btn btn-gold text-xs uppercase tracking-widest px-8 py-3 rounded-full font-semibold">
+          OUR MENU
+        </a>
+        <a href="/admin/dishes" class="btn btn-outline-gold text-xs uppercase tracking-widest px-8 py-3 rounded-full font-semibold">
+          QUẢN TRỊ ADMIN
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE OUR RESTAURANT SECTION (Theo đúng Hình ảnh 3) -->
+<section class="py-16 bg-[#0c0b09]">
+  <div class="container mx-auto px-4">
+    <div class="section-header mb-12">
+      <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">TẠI SAO CHỌN CHÚNG TÔI</span>
+      <h2 class="section-title text-3xl font-serif text-white">Why Choose Our Restaurant</h2>
+    </div>
+
+    <div class="why-us-grid grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Card 01 -->
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">01</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Nguyên Liệu Tuyển Chọn</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          100% nguyên liệu tươi sạch, nhập khẩu cao cấp và được kiểm định nghiêm ngặt từ nông trại đạt chuẩn organic.
+        </p>
+      </div>
+
+      <!-- Card 02 -->
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">02</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Đầu Bếp Đẳng Cấp</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          Đội ngũ Master Chef giàu kinh nghiệm, mang đến hương vị chuẩn ẩm thực hoàng gia và nghệ thuật bài trí tinh xảo.
+        </p>
+      </div>
+
+      <!-- Card 03 -->
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">03</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Không Gian Sang Trọng</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          Không gian kiến trúc cổ điển ấm cúng hòa quyện cùng ánh đèn vàng dịu nhẹ, tạo nên trải nghiệm trọn vẹn nhất.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU SECTION (Theo đúng Hình ảnh 4) -->
+<section id="menu" class="py-16 bg-[#0c0b09] border-t border-[#28251f]">
+  <div class="container mx-auto px-4">
+    
+    <div class="section-header text-center sm:text-left mb-8">
+      <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">MENU</span>
+      <h2 class="section-title text-3xl sm:text-4xl font-serif text-white">Check Our Tasty Menu</h2>
+    </div>
+
+    <!-- Thanh tìm kiếm chuẩn HTML GET (Không dùng script/AJAX) -->
+    <div class="bg-[#1a1814] border border-[#cda45e]/20 rounded-lg p-4 sm:p-6 mb-12">
+      <form action="/dishes" method="GET" class="flex flex-col sm:flex-row gap-3">
+        <input 
+          type="text" 
+          name="q" 
+          placeholder="Tìm món ăn yêu thích (vd: Phở, Bò Wagyu, Tôm hùm)..." 
+          value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+          class="flex-1 bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+        >
+        <button type="submit" class="btn btn-gold text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-md">
+          Tìm Kiếm
+        </button>
+        <% if (searchQuery) { %>
+          <a href="/dishes" class="btn btn-secondary text-xs uppercase tracking-wider font-semibold px-5 py-3 rounded-md text-center">
+            Xóa Lọc
+          </a>
+        <% } %>
+      </form>
+
+      <% if (searchQuery) { %>
+        <p class="text-xs text-[#cda45e] mt-3">
+          Kết quả tìm kiếm cho từ khóa: <strong>"<%= searchQuery %>"</strong> (<%= dishes.length %> món tìm thấy)
+        </p>
+      <% } %>
+    </div>
+
+    <!-- Danh sách Món Ăn dạng Dòng Dotted Line (Đặc trưng Restaurantly - Hình ảnh 4) -->
+    <% if (dishes.length === 0) { %>
+      <div class="text-center py-16 bg-[#1a1814] border border-[#28251f] rounded-lg">
+        <p class="text-lg text-[#bab8b2] mb-4">Hiện không tìm thấy món ăn nào phù hợp với yêu cầu của bạn.</p>
+        <a href="/dishes" class="btn btn-gold text-xs uppercase tracking-wider px-6 py-2.5 rounded-full">
+          Xem Tất Cả Món Ăn
+        </a>
+      </div>
+    <% } else { %>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
+        <% 
+          // Mảng ảnh minh họa phong cách nhà hàng ẩm thực cao cấp
+          const sampleImages = [
+            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=160&q=80',
+            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=160&q=80',
+            'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=160&q=80',
+            'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=160&q=80',
+            'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=160&q=80',
+            'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=160&q=80'
+          ];
+        %>
+
+        <% dishes.forEach((dish, index) => { %>
+          <div class="flex items-start gap-4 pb-4 group">
+            <!-- Ảnh đĩa món ăn tròn có viền bo tròn đặc trưng -->
+            <img 
+              src="<%= sampleImages[index % sampleImages.length] %>" 
+              alt="<%= dish.name %>" 
+              class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-white/20 flex-shrink-0 group-hover:border-[#cda45e] transition"
+            >
+
+            <!-- Nội dung tên, giá chấm dotted line và mô tả -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline justify-between gap-2">
+                <a href="/dishes/<%= dish.id %>" class="font-serif text-base sm:text-lg font-bold text-white hover:text-[#cda45e] transition truncate">
+                  <%= dish.name %>
+                </a>
+                <span class="flex-1 border-b border-dotted border-white/20 relative -top-1 mx-2"></span>
+                <span class="font-bold text-[#cda45e] text-base whitespace-nowrap">
+                  <%= Number(dish.price).toLocaleString('vi-VN') %> đ
+                </span>
+              </div>
+
+              <p class="text-xs sm:text-sm italic text-[#bab8b2]/80 mt-1 line-clamp-2">
+                <%= dish.description %>
+              </p>
+
+              <div class="flex items-center gap-2 mt-2">
+                <span class="text-[10px] uppercase tracking-wider text-[#cda45e] bg-[#cda45e]/10 border border-[#cda45e]/30 px-2 py-0.5 rounded">
+                  <%= dish.category %>
+                </span>
+                <% if (dish.available) { %>
+                  <span class="text-[10px] uppercase tracking-wider text-green-400 bg-green-500/10 border border-green-500/30 px-2 py-0.5 rounded">
+                    Còn Món
+                  </span>
+                <% } else { %>
+                  <span class="text-[10px] uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded">
+                    Tạm Hết
+                  </span>
+                <% } %>
+                <a href="/dishes/<%= dish.id %>" class="ml-auto text-xs text-white/60 hover:text-[#cda45e] transition">
+                  Chi tiết &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

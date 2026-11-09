@@ -1,0 +1,130 @@
+<%- include('../../partials/header') %>
+
+<section class="py-12 bg-[#0c0b09]">
+  <div class="container mx-auto px-4 max-w-2xl">
+    
+    <!-- Tiêu đề form -->
+    <div class="mb-8">
+      <a href="/admin/dishes" class="text-xs uppercase tracking-wider text-[#cda45e] hover:underline mb-2 inline-block">
+        &larr; Quay lại danh sách món ăn
+      </a>
+      <h1 class="text-3xl font-serif text-white">
+        <%= isEdit ? 'Chỉnh Sửa Món Ăn #' + values.id : 'Thêm Món Ăn Mới' %>
+      </h1>
+      <p class="text-xs text-[#7f7c75] mt-1">
+        Vui lòng điền đầy đủ các thông tin cần thiết bên dưới
+      </p>
+    </div>
+
+    <!-- Khối hiển thị thông báo lỗi 400 (Bad Request) -->
+    <% if (errors && errors.length > 0) { %>
+      <div class="bg-red-500/10 border border-red-500/40 rounded-lg p-5 mb-8 text-sm text-red-300">
+        <div class="font-bold flex items-center gap-2 mb-2 text-red-200">
+          <span>⚠️</span> Đã có lỗi xảy ra, vui lòng kiểm tra:
+        </div>
+        <ul class="list-disc list-inside space-y-1 text-xs">
+          <% errors.forEach(err => { %>
+            <li><%= err %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <!-- Form HTML thuần (SSR) dùng Method Override khi cập nhật (PATCH) -->
+    <div class="bg-[#1a1814] border border-[#cda45e]/25 rounded-xl p-8 shadow-2xl">
+      <form action="<%= isEdit ? '/admin/dishes/' + values.id + '?_method=PATCH' : '/admin/dishes' %>" method="POST" class="space-y-6">
+        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+        
+        <div>
+          <label for="name" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Tên Món Ăn <span class="text-red-400">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            value="<%= values.name || '' %>" 
+            placeholder="Ví dụ: Phở Bò Tái Lăn, Bò Wagyu Nướng..." 
+            required
+            class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+          >
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="category" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+              Danh Mục <span class="text-red-400">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="category" 
+              name="category" 
+              value="<%= values.category || '' %>" 
+              placeholder="Ví dụ: Món Nước, Món Chính, Tráng Miệng..." 
+              required
+              class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+            >
+          </div>
+
+          <div>
+            <label for="price" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+              Giá Bán (VNĐ) <span class="text-red-400">*</span>
+            </label>
+            <input 
+              type="number" 
+              id="price" 
+              name="price" 
+              step="1" 
+              min="0" 
+              value="<%= values.price !== undefined ? values.price : '' %>" 
+              placeholder="Ví dụ: 85000" 
+              required
+              class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+            >
+          </div>
+        </div>
+
+        <div>
+          <label for="description" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Mô Tả Hương Vị Món Ăn <span class="text-red-400">*</span>
+          </label>
+          <textarea 
+            id="description" 
+            name="description" 
+            rows="4" 
+            placeholder="Giới thiệu cách thức chế biến, xuất xứ và nét hấp dẫn của món ăn..." 
+            required
+            class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+          ><%= values.description || '' %></textarea>
+        </div>
+
+        <div class="pt-2">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input 
+              type="checkbox" 
+              id="available" 
+              name="available" 
+              <%= (values.available === true || values.available === 'on' || values.available === 'true') ? 'checked' : '' %>
+              class="w-4 h-4 accent-[#cda45e] rounded"
+            >
+            <span class="text-sm text-[#bab8b2] select-none">
+              Sẵn sàng phục vụ thực khách (Available)
+            </span>
+          </label>
+        </div>
+
+        <div class="pt-6 border-t border-[#28251f] flex items-center gap-4">
+          <button type="submit" class="btn btn-gold text-xs uppercase tracking-wider font-semibold px-8 py-3 rounded-full">
+            <%= isEdit ? 'Lưu Cập Nhật (PATCH)' : 'Thêm Món Ăn (POST)' %>
+          </button>
+          <a href="/admin/dishes" class="btn btn-secondary text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full">
+            Hủy Bỏ
+          </a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

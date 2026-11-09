@@ -1,0 +1,66 @@
+<%- include('../partials/header') %>
+
+<section class="hero-section relative bg-[#0c0b09] py-20 lg:py-28 border-b border-[#28251f]">
+  <div class="container mx-auto px-4">
+    <div class="max-w-2xl">
+      <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+        <span class="inline-block text-xs uppercase tracking-widest text-[#cda45e] font-semibold mb-2">
+          Xin chào, <%= currentUser.name %>!
+        </span>
+      <% } %>
+      <h1 class="hero-title text-4xl sm:text-5xl lg:text-6xl font-serif text-white leading-tight mb-4">
+        Welcome to <span class="text-[#cda45e]">Restaurantly</span>
+      </h1>
+      <p class="hero-subtitle text-lg sm:text-xl text-[#bab8b2] mb-8 font-light">
+        Delivering great food for more than 18 years! Tinh hoa ẩm thực thượng hạng được chế biến từ những đầu bếp hàng đầu thế giới.
+      </p>
+      <div class="hero-buttons flex flex-wrap gap-4">
+        <a href="/menu" class="btn btn-gold text-xs uppercase tracking-widest px-8 py-3 rounded-full font-semibold">
+          OUR MENU
+        </a>
+        <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+          <a href="/admin/dishes" class="btn btn-outline-gold text-xs uppercase tracking-widest px-8 py-3 rounded-full font-semibold">
+            QUẢN TRỊ ADMIN
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-16 bg-[#0c0b09]">
+  <div class="container mx-auto px-4">
+    <div class="section-header mb-12">
+      <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">TẠI SAO CHỌN CHÚNG TÔI</span>
+      <h2 class="section-title text-3xl font-serif text-white">Why Choose Our Restaurant</h2>
+    </div>
+
+    <div class="why-us-grid grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">01</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Nguyên Liệu Tuyển Chọn</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          100% nguyên liệu tươi sạch, nhập khẩu cao cấp và được kiểm định nghiêm ngặt từ nông trại đạt chuẩn organic.
+        </p>
+      </div>
+
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">02</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Đầu Bếp Đẳng Cấp</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          Đội ngũ Master Chef giàu kinh nghiệm, mang đến hương vị chuẩn ẩm thực hoàng gia và nghệ thuật bài trí tinh xảo.
+        </p>
+      </div>
+
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">03</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Không Gian Sang Trọng</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          Không gian kiến trúc cổ điển ấm cúng hòa quyện cùng ánh đèn vàng dịu nhẹ, tạo nên trải nghiệm trọn vẹn nhất.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
