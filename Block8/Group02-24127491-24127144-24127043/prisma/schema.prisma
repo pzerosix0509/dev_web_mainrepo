@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  email               String               @unique
+  rawEmail            String?
+  passwordHash        String
+  role                String               @default("viewer")
+  status              String               @default("pending")
+  isVerified          Boolean              @default(false)
+  emailVerifiedAt     DateTime?
+  passwordChangedAt   DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  activationChallenge ActivationChallenge?
+  passwordResets      PasswordReset[]
+  sessions            Session[]
+}
+
+model ActivationChallenge {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose     String    @default("activation")
+  otpHash     String
+  expiresAt   DateTime
+  attempts    Int       @default(0)
+  resendCount Int       @default(0)
+  lockedUntil DateTime?
+  lastSentAt  DateTime  @default(now())
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model PasswordReset {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Session {
+  sid       String   @id
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LoginAttempt {
+  id          Int       @id @default(autoincrement())
+  key         String    @unique
+  keyType     String
+  target      String
+  attempts    Int       @default(0)
+  windowStart DateTime  @default(now())
+  lockedUntil DateTime?
+  updatedAt   DateTime  @updatedAt
+}
+
+model CaptchaChallenge {
+  id          Int       @id @default(autoincrement())
+  challengeId String    @unique
+  answerHash  String
+  sessionId   String?
+  purpose     String
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model Dish {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Int
+  category    String
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Chef {
+  id        Int      @id @default(autoincrement())
+  name      String
+  specialty String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ingredient {
+  id        Int      @id @default(autoincrement())
+  name      String
+  unit      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,32 @@
+<%- include('partials/header') %>
+
+<section class="py-20 bg-[#0c0b09]">
+  <div class="container mx-auto px-4 max-w-lg text-center">
+    
+    <div class="bg-[#1a1814] border border-[#cda45e]/25 rounded-2xl p-10 shadow-2xl">
+      <div class="font-serif text-6xl sm:text-7xl font-bold text-[#cda45e] mb-4">
+        404
+      </div>
+
+      <h1 class="text-2xl font-serif text-white mb-3">
+        <%= typeof message !== 'undefined' ? message : 'Trang Không Tồn Tại' %>
+      </h1>
+
+      <p class="text-xs sm:text-sm text-[#bab8b2] mb-8 leading-relaxed">
+        Rất tiếc, liên kết bạn đang tìm kiếm không tồn tại hoặc đã được chuyển sang địa chỉ khác.
+      </p>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/dishes" class="btn btn-gold text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full">
+          &larr; Về Thực Đơn
+        </a>
+        <a href="/admin/dishes" class="btn btn-outline-gold text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full">
+          Trang Quản Trị
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>

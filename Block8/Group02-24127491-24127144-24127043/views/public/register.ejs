@@ -1,0 +1,262 @@
+<%- include('../partials/header') %>
+
+<section class="py-16 bg-[#0c0b09] min-h-[calc(100vh-160px)] flex items-center justify-center">
+  <div class="container mx-auto px-4 max-w-lg">
+    
+    <!-- Header của trang -->
+    <div class="text-center mb-8">
+      <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">THÀNH VIÊN MỚI</span>
+      <h1 class="text-3xl sm:text-4xl font-serif text-white mt-1">Đăng Ký Tài Khoản</h1>
+      <p class="text-xs text-[#8c8983] mt-2">
+        Đăng ký tài khoản hội viên với xác thực CAPTCHA và kích hoạt bằng mã OTP qua email.
+      </p>
+    </div>
+
+    <!-- Thông báo lỗi khi Server trả về -->
+    <% if (typeof errors !== 'undefined' && errors && errors.length > 0) { %>
+      <div class="bg-red-500/10 border border-red-500/40 rounded-lg p-4 mb-6 text-sm text-red-300">
+        <div class="font-semibold flex items-center gap-2 mb-2 text-red-200">
+          <span>⚠️</span> Vui lòng kiểm tra lại thông tin:
+        </div>
+        <ul class="list-disc list-inside space-y-1 text-xs">
+          <% errors.forEach(err => { %>
+            <li><%= err %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <!-- Card Form Đăng ký -->
+    <div class="bg-[#1a1814] border border-[#cda45e]/25 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-28 h-28 bg-[#cda45e]/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <form action="/register" method="POST" id="registerForm" class="space-y-5">
+        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+
+        <!-- Họ và tên -->
+        <div>
+          <label for="name" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Họ và Tên <span class="text-red-400">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              value="<%= typeof values !== 'undefined' && values.name ? values.name : '' %>"
+              placeholder="Nguyễn Văn A" 
+              required
+              class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#cda45e] text-sm transition"
+            >
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Địa Chỉ Email <span class="text-red-400">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              value="<%= typeof values !== 'undefined' && values.email ? values.email : '' %>"
+              placeholder="tenban@example.com" 
+              required
+              class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-lg focus:outline-none focus:border-[#cda45e] text-sm transition"
+            >
+          </div>
+          <p class="text-[11px] text-[#7f7c75] mt-1">Email sẽ được chuẩn hóa (chữ thường, cắt khoảng trắng) và nhận mã OTP gồm 6 chữ số để kích hoạt.</p>
+        </div>
+
+        <!-- Mật khẩu -->
+        <div>
+          <label for="password" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Mật Khẩu <span class="text-red-400">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="Tối thiểu 8 ký tự (gồm chữ cái và chữ số)" 
+              required
+              minlength="8"
+              class="w-full bg-[#151410] border border-[#28251f] text-white pl-4 pr-10 py-3 rounded-lg focus:outline-none focus:border-[#cda45e] text-sm transition"
+            >
+            <button 
+              type="button" 
+              onclick="togglePasswordVisibility('password', this)"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-[#7f7c75] hover:text-[#cda45e] focus:outline-none"
+              title="Hiện/Ẩn mật khẩu"
+            >
+              👁️
+            </button>
+          </div>
+          
+          <!-- Thanh đo độ mạnh mật khẩu trực quan -->
+          <div class="mt-2 space-y-1">
+            <div class="h-1.5 w-full bg-[#151410] rounded-full overflow-hidden border border-[#28251f]">
+              <div id="pwdStrengthBar" class="h-full w-0 transition-all duration-300"></div>
+            </div>
+            <div class="flex justify-between items-center text-[10px] text-[#7f7c75]">
+              <span id="pwdStrengthText">Độ mạnh mật khẩu</span>
+              <span class="text-[10px] text-[#6e6b65]">Tối thiểu 8 ký tự, chữ & số</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nhập lại mật khẩu -->
+        <div>
+          <label for="confirmPassword" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Xác Nhận Mật Khẩu <span class="text-red-400">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              name="confirmPassword" 
+              placeholder="Nhập lại mật khẩu phía trên" 
+              required
+              minlength="8"
+              class="w-full bg-[#151410] border border-[#28251f] text-white pl-4 pr-10 py-3 rounded-lg focus:outline-none focus:border-[#cda45e] text-sm transition"
+            >
+            <button 
+              type="button" 
+              onclick="togglePasswordVisibility('confirmPassword', this)"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-[#7f7c75] hover:text-[#cda45e] focus:outline-none"
+              title="Hiện/Ẩn mật khẩu"
+            >
+              👁️
+            </button>
+          </div>
+          <p id="pwdMatchWarning" class="text-[11px] text-red-400 mt-1 hidden">Mật khẩu nhập lại không khớp.</p>
+        </div>
+
+        <!-- Khung Thử Thách Chống Bot Cloudflare Turnstile -->
+        <div class="pt-1">
+          <label class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Xác Minh Bảo Mật Chống Bot (Cloudflare) <span class="text-[#cda45e]">*</span>
+          </label>
+          <input
+            type="hidden"
+            name="challengeId"
+            id="captchaChallengeId"
+            value="<%= typeof captcha !== 'undefined' && captcha ? captcha.challengeId : '' %>"
+          >
+          <div class="bg-[#151410] border border-[#28251f] rounded-lg p-3 flex justify-center">
+            <div
+              class="cf-turnstile"
+              data-sitekey="<%= typeof captcha !== 'undefined' && captcha && captcha.siteKey ? captcha.siteKey : '1x00000000000000000000AA' %>"
+              data-theme="dark"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Nút bấm Đăng Ký -->
+        <button 
+          type="submit" 
+          id="btnSubmitRegister"
+          class="w-full btn btn-gold text-xs uppercase tracking-widest font-bold py-3.5 rounded-lg shadow-lg hover:shadow-[#cda45e]/20 transition duration-300"
+        >
+          Đăng Ký & Nhận Mã OTP
+        </button>
+      </form>
+
+      <!-- Đường phân cách -->
+      <div class="relative my-6 text-center">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-[#28251f]"></div></div>
+        <span class="relative bg-[#1a1814] px-4 text-xs text-[#6e6b65] uppercase tracking-wider">Đã có tài khoản hoặc mã OTP?</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <a 
+          href="/login" 
+          class="w-full block text-center btn btn-outline-gold text-xs uppercase tracking-wider py-3 rounded-lg transition"
+        >
+          Đăng Nhập
+        </a>
+        <a 
+          href="/activate" 
+          class="w-full block text-center bg-[#151410] border border-[#28251f] hover:border-[#cda45e] text-white text-xs uppercase tracking-wider py-3 rounded-lg transition"
+        >
+          Nhập Mã OTP
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+  function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁️';
+    }
+  }
+
+  const pwdInput = document.getElementById('password');
+  const confirmPwdInput = document.getElementById('confirmPassword');
+  const bar = document.getElementById('pwdStrengthBar');
+  const text = document.getElementById('pwdStrengthText');
+  const matchWarning = document.getElementById('pwdMatchWarning');
+
+  function evaluatePasswordStrength(val) {
+    if (!val) {
+      bar.style.width = '0%';
+      bar.className = 'h-full transition-all duration-300';
+      text.textContent = 'Độ mạnh mật khẩu';
+      text.className = 'text-[10px] text-[#7f7c75]';
+      return;
+    }
+
+    let score = 0;
+    if (val.length >= 8) score += 1;
+    if (val.length >= 10) score += 1;
+    if (/[A-Z]/.test(val)) score += 1;
+    if (/[0-9]/.test(val)) score += 1;
+    if (/[^A-Za-z0-9]/.test(val)) score += 1;
+
+    if (score <= 2) {
+      bar.style.width = '33%';
+      bar.className = 'h-full bg-red-500 transition-all duration-300';
+      text.textContent = 'Mật khẩu yếu';
+      text.className = 'text-[10px] text-red-400 font-semibold';
+    } else if (score <= 3) {
+      bar.style.width = '66%';
+      bar.className = 'h-full bg-yellow-500 transition-all duration-300';
+      text.textContent = 'Mật khẩu trung bình';
+      text.className = 'text-[10px] text-yellow-400 font-semibold';
+    } else {
+      bar.style.width = '100%';
+      bar.className = 'h-full bg-emerald-500 transition-all duration-300';
+      text.textContent = 'Mật khẩu mạnh & an toàn';
+      text.className = 'text-[10px] text-emerald-400 font-semibold';
+    }
+  }
+
+  pwdInput.addEventListener('input', () => {
+    evaluatePasswordStrength(pwdInput.value);
+    checkPasswordMatch();
+  });
+
+  confirmPwdInput.addEventListener('input', checkPasswordMatch);
+
+  function checkPasswordMatch() {
+    if (confirmPwdInput.value && pwdInput.value !== confirmPwdInput.value) {
+      matchWarning.classList.remove('hidden');
+    } else {
+      matchWarning.classList.add('hidden');
+    }
+  }
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<%- include('../partials/footer') %>

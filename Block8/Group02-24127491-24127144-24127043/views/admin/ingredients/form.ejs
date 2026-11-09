@@ -1,0 +1,80 @@
+<%- include('../../partials/header') %>
+
+<section class="py-12 bg-[#0c0b09]">
+  <div class="container mx-auto px-4 max-w-xl">
+    
+    <div class="mb-8">
+      <a href="/admin/ingredients" class="text-xs uppercase tracking-wider text-[#cda45e] hover:underline mb-2 inline-block">
+        &larr; Quay lại danh sách nguyên liệu
+      </a>
+      <h1 class="text-3xl font-serif text-white">
+        <%= isEdit ? 'Chỉnh Sửa Nguyên Liệu #' + values.id : 'Thêm Nguyên Liệu Mới' %>
+      </h1>
+      <p class="text-xs text-[#7f7c75] mt-1">
+        Quản lý thông số đơn vị và danh mục nguyên liệu phục vụ bếp
+      </p>
+    </div>
+
+    <!-- Khối hiển thị lỗi 400 -->
+    <% if (errors && errors.length > 0) { %>
+      <div class="bg-red-500/10 border border-red-500/40 rounded-lg p-5 mb-8 text-sm text-red-300">
+        <div class="font-bold flex items-center gap-2 mb-2 text-red-200">
+          <span>⚠️</span> Vui lòng kiểm tra lại:
+        </div>
+        <ul class="list-disc list-inside space-y-1 text-xs">
+          <% errors.forEach(err => { %>
+            <li><%= err %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <div class="bg-[#1a1814] border border-[#cda45e]/25 rounded-xl p-8 shadow-2xl">
+      <form action="<%= isEdit ? '/admin/ingredients/' + values.id + '?_method=PATCH' : '/admin/ingredients' %>" method="POST" class="space-y-6">
+        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+        
+        <div>
+          <label for="name" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Tên Nguyên Liệu <span class="text-red-400">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            value="<%= values.name || '' %>" 
+            placeholder="Ví dụ: Thịt bò Wagyu A5, Gạo ST25..." 
+            required
+            class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+          >
+        </div>
+
+        <div>
+          <label for="unit" class="block text-xs uppercase tracking-wider font-semibold text-white mb-2">
+            Đơn Vị Tính <span class="text-red-400">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="unit" 
+            name="unit" 
+            value="<%= values.unit || '' %>" 
+            placeholder="Ví dụ: kg, gram, lít, con, bó, hộp..." 
+            required
+            class="w-full bg-[#151410] border border-[#28251f] text-white px-4 py-3 rounded-md focus:outline-none focus:border-[#cda45e] text-sm"
+          >
+        </div>
+
+        <div class="pt-6 border-t border-[#28251f] flex items-center gap-4">
+          <button type="submit" class="btn btn-gold text-xs uppercase tracking-wider font-semibold px-8 py-3 rounded-full">
+            <%= isEdit ? 'Lưu Cập Nhật (PATCH)' : 'Lưu Nguyên Liệu (POST)' %>
+          </button>
+          <a href="/admin/ingredients" class="btn btn-secondary text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full">
+            Hủy Bỏ
+          </a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

@@ -1,0 +1,47 @@
+<%- include('../../partials/header') %>
+
+<section class="py-16 bg-[#0c0b09]">
+  <div class="container mx-auto px-4 max-w-lg">
+    
+    <div class="bg-[#1a1814] border border-red-500/40 rounded-xl p-8 shadow-2xl text-center">
+      <div class="w-16 h-16 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+        ⚠️
+      </div>
+
+      <span class="text-xs uppercase tracking-widest text-red-400 font-semibold block mb-1">CẢNH BÁO QUẢN TRỊ</span>
+      <h1 class="text-2xl font-serif text-white mb-4">Xác Nhận Xóa Đầu Bếp</h1>
+
+      <p class="text-xs text-[#bab8b2] mb-6">
+        Bạn có chắc chắn muốn xóa hồ sơ đầu bếp sau khỏi danh sách quản lý?
+      </p>
+
+      <div class="bg-[#151410] border border-[#28251f] rounded-lg p-5 mb-8 text-left text-sm space-y-2">
+        <div class="flex justify-between border-b border-[#28251f] pb-2">
+          <span class="text-[#7f7c75] text-xs uppercase">Mã Đầu Bếp:</span>
+          <span class="font-mono text-[#cda45e] font-bold">#<%= chef.id %></span>
+        </div>
+        <div class="flex justify-between border-b border-[#28251f] pb-2">
+          <span class="text-[#7f7c75] text-xs uppercase">Họ Và Tên:</span>
+          <span class="text-white font-serif font-bold"><%= chef.name %></span>
+        </div>
+        <div class="flex justify-between pt-1">
+          <span class="text-[#7f7c75] text-xs uppercase">Chuyên Môn:</span>
+          <span class="text-[#cda45e]"><%= chef.specialty %></span>
+        </div>
+      </div>
+
+      <form action="/admin/chefs/<%= chef.id %>?_method=DELETE" method="POST" class="flex justify-center gap-4">
+        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+        <a href="/admin/chefs" class="btn btn-secondary text-xs uppercase tracking-wider font-semibold px-6 py-3 rounded-full">
+          Hủy Bỏ
+        </a>
+        <button type="submit" class="btn btn-danger text-xs uppercase tracking-wider font-semibold px-8 py-3 rounded-full shadow-lg">
+          Xác Nhận Xóa (DELETE)
+        </button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<%- include('../../partials/footer') %>

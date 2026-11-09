@@ -1,0 +1,2412 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Restaurantly SSR-Auth · Terminal Slide Deck · Group 02</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+      
+      /* Theme Matrix (Default) */
+      --bg: #070b09;
+      --bg-window: #0c120f;
+      --bg-card: #111a15;
+      --bg-card-hover: #16221c;
+      --bg-code: #050806;
+      --border: #1a3326;
+      --border-bright: #00ff66;
+      --text: #dcfce7;
+      --text-muted: #86efac;
+      --text-dim: #4ade8099;
+      --text-dark: #22543d;
+      --accent: #00ff66;
+      --accent-glow: rgba(0, 255, 102, 0.25);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.25);
+      --red: #ef4444;
+      --red-glow: rgba(239, 68, 68, 0.25);
+      --cyan: #38bdf8;
+      --purple: #c084fc;
+      --blue: #60a5fa;
+    }
+
+    [data-theme="amber"] {
+      --bg: #0a0804;
+      --bg-window: #120e06;
+      --bg-card: #1c150a;
+      --bg-card-hover: #261d0e;
+      --bg-code: #060502;
+      --border: #382a13;
+      --border-bright: #f59e0b;
+      --text: #fef3c7;
+      --text-muted: #fde68a;
+      --text-dim: #fbbf2499;
+      --text-dark: #78350f;
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.25);
+    }
+
+    [data-theme="cyan"] {
+      --bg: #040912;
+      --bg-window: #081220;
+      --bg-card: #0d1c30;
+      --bg-card-hover: #132742;
+      --bg-code: #02050a;
+      --border: #16365c;
+      --border-bright: #38bdf8;
+      --text: #e0f2fe;
+      --text-muted: #7dd3fc;
+      --text-dim: #38bdf899;
+      --text-dark: #075985;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+    }
+
+    [data-theme="dracula"] {
+      --bg: #090a10;
+      --bg-window: #11131f;
+      --bg-card: #181b2c;
+      --bg-card-hover: #22263d;
+      --bg-code: #06070a;
+      --border: #2d3252;
+      --border-bright: #c084fc;
+      --text: #f3e8ff;
+      --text-muted: #d8b4fe;
+      --text-dim: #c084fc99;
+      --text-dark: #581c87;
+      --accent: #c084fc;
+      --accent-glow: rgba(192, 132, 252, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Scanlines effect (toggleable) */
+    body.scanlines::before {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      z-index: 9999;
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* Top Shell Window Header */
+    .term-header {
+      background: var(--bg-window);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .term-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .term-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .term-dot.red { background: #ff5f56; }
+    .term-dot.yellow { background: #ffbd2e; }
+    .term-dot.green { background: #27c93f; }
+
+    .term-title {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .term-title span.host {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .term-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+    }
+
+    .btn-term {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-term:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .btn-term.active {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 700;
+      border-color: var(--accent);
+    }
+
+    /* Presentation Deck Stage */
+    .deck-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px 90px;
+      position: relative;
+    }
+
+    /* Progress bar */
+    .progress-track {
+      width: 100%;
+      height: 3px;
+      background: var(--border);
+      margin-bottom: 20px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    /* Slide Item */
+    .slide {
+      display: none;
+      background: var(--bg-window);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 32px 36px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      animation: fadeIn 0.25s ease-out;
+      min-height: 640px;
+    }
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Terminal Meta Bar inside slide */
+    .slide-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+    .slide-meta .tag {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 3px;
+      color: var(--accent);
+    }
+
+    /* Slide Titles */
+    .slide-prompt {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+    .slide-prompt span.path {
+      color: var(--cyan);
+    }
+    .slide-prompt span.cmd {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    h1.slide-title {
+      font-size: 1.85rem;
+      color: #ffffff;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.5px;
+    }
+    h1.slide-title .prefix {
+      color: var(--accent);
+    }
+
+    p.slide-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    /* Grid layout inside slides */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    /* Terminal Cards */
+    .term-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 18px;
+      position: relative;
+    }
+    .term-box.accent-border {
+      border-left: 3px solid var(--accent);
+    }
+    .term-box.amber-border {
+      border-left: 3px solid var(--amber);
+    }
+    .term-box.red-border {
+      border-left: 3px solid var(--red);
+    }
+    .term-box.cyan-border {
+      border-left: 3px solid var(--cyan);
+    }
+
+    .term-box-header {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .term-box-header.amber { color: var(--amber); }
+    .term-box-header.red { color: var(--red); }
+    .term-box-header.cyan { color: var(--cyan); }
+    .term-box-header.purple { color: var(--purple); }
+
+    .term-box p, .term-box li {
+      font-size: 0.86rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .term-box ul {
+      margin-left: 20px;
+      margin-top: 6px;
+    }
+    .term-box li {
+      margin-bottom: 6px;
+    }
+
+    /* Badges & Tags */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      border: 1px solid currentColor;
+    }
+    .badge.green { color: var(--accent); background: var(--accent-glow); }
+    .badge.amber { color: var(--amber); background: var(--amber-glow); }
+    .badge.red { color: var(--red); background: var(--red-glow); }
+    .badge.cyan { color: var(--cyan); background: rgba(56, 189, 248, 0.15); }
+    .badge.purple { color: var(--purple); background: rgba(192, 132, 252, 0.15); }
+
+    /* Code blocks */
+    .code-container {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+      font-size: 0.81rem;
+    }
+    .code-bar {
+      background: #080c09;
+      border-bottom: 1px solid var(--border);
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-dim);
+    }
+    .code-bar span.file {
+      color: var(--cyan);
+      font-weight: 600;
+    }
+    pre.code-body {
+      padding: 14px 16px;
+      overflow-x: auto;
+      color: #e2e8f0;
+      line-height: 1.5;
+      font-family: var(--font-mono);
+    }
+    .kw { color: #f472b6; font-weight: 600; }
+    .fn { color: #60a5fa; }
+    .str { color: #34d399; }
+    .num { color: #fbbf24; }
+    .comment { color: #64748b; font-style: italic; }
+    .hl { background: rgba(0, 255, 102, 0.15); display: inline-block; width: 100%; border-left: 2px solid var(--accent); padding-left: 4px; }
+
+    /* ASCII Diagrams */
+    pre.ascii-diagram {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      color: var(--accent);
+      overflow-x: auto;
+    }
+
+    /* Terminal Data Tables */
+    .term-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-top: 10px;
+    }
+    .term-table th {
+      text-align: left;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 9px 12px;
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .term-table td {
+      border: 1px solid var(--border);
+      padding: 9px 12px;
+      color: var(--text);
+      vertical-align: top;
+    }
+    .term-table tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    /* Bottom Terminal Prompt Bar */
+    .term-prompt-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-window);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.7);
+    }
+
+    .prompt-prefix {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .prompt-input-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 12px;
+    }
+    .prompt-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      width: 100%;
+    }
+    .prompt-input::placeholder {
+      color: var(--text-dark);
+    }
+
+    .deck-nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .slide-counter {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      min-width: 90px;
+      text-align: center;
+    }
+
+    /* Modal Grid View (All slides overview) */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 7, 6, 0.92);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    .modal-backdrop.active {
+      display: block;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+    .modal-title {
+      font-size: 1.25rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .grid-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .grid-slide-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .grid-slide-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      background: var(--bg-card-hover);
+    }
+    .grid-slide-card.current {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .grid-slide-card .num {
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .grid-slide-card .title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .grid-slide-card .desc {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    /* Cursor blink */
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: var(--accent);
+      vertical-align: -2px;
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* Sound helper note */
+    .sound-note {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .term-header { flex-direction: column; gap: 8px; align-items: flex-start; }
+      .slide { padding: 20px 16px; }
+      .term-prompt-bar { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body class="scanlines">
+
+  <!-- Terminal Top Header -->
+  <header class="term-header">
+    <div class="term-dots">
+      <span class="term-dot red" title="Close Session"></span>
+      <span class="term-dot yellow" title="Minimize"></span>
+      <span class="term-dot green" title="Maximize"></span>
+      <div class="term-title" style="margin-left: 8px;">
+        <span class="host">group02@restaurantly-srv</span>: <span style="color: #94a3b8;">~/block8-auth-ssr$</span>
+      </div>
+    </div>
+
+    <div class="term-controls">
+      <button class="btn-term" onclick="toggleTheme()" id="btnTheme" title="Đổi theme terminal">
+        🎨 <span id="themeLabel">THEME: MATRIX</span>
+      </button>
+      <button class="btn-term" onclick="toggleScanlines()" id="btnScanlines" title="Bật/Tắt hiệu ứng quét CRT">
+        📺 CRT: ON
+      </button>
+      <button class="btn-term" onclick="toggleSound()" id="btnSound" title="Bật/Tắt âm thanh bàn phím & beep">
+        🔊 SFX: OFF
+      </button>
+      <button class="btn-term" onclick="openOverview()" title="Xem lưới toàn bộ slide (Phím O hoặc Esc)">
+        📑 GRID VIEW [O]
+      </button>
+      <button class="btn-term" onclick="toggleFullscreen()" title="Chế độ toàn màn hình (Phím F)">
+        ⛶ FULLSCREEN [F]
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Slide Presentation Container -->
+  <main class="deck-container">
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar" style="width: 4%;"></div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 01: WELCOME & SYSTEM BOOT -->
+    <!-- ===================================================================== -->
+    <section class="slide active" data-slide="1" data-title="[INIT] Bootloader & Giới Thiệu">
+      <div class="slide-meta">
+        <div><span class="tag">SYSTEM_BOOT</span> :: AUTHENTICATION_ENGINE_V1.0</div>
+        <div>SESSION: SSR_BLOCK8_GROUP02 · ARCH: X86_64_NODE20</div>
+      </div>
+      
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">./boot-presentation.sh --interactive</span>
+      </div>
+
+      <pre class="ascii-diagram" style="margin: 12px 0 20px; color: var(--accent);">
+ ██████╗ ███████╗███████╗████████╗ █████╗ ██╗   ██╗██████╗  █████╗ ███╗   ██╗████████╗██╗     ██╗   ██╗
+ ██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔══██╗██║   ██║██╔══██╗██╔══██╗████╗  ██║╚══██╔══╝██║     ╚██╗ ██╔╝
+ ██████╔╝█████╗  ███████╗   ██║   ███████║██║   ██║██████╔╝███████║██╔██╗ ██║   ██║   ██║      ╚████╔╝ 
+ ██╔══██╗██╔══╝  ╚════██║   ██║   ██╔══██║██║   ██║██╔══██╗██╔══██║██║╚██╗██║   ██║   ██║       ╚██╔╝  
+ ██║  ██║███████╗███████║   ██║   ██║  ██║╚██████╔╝██║  ██║██║  ██║██║ ╚████║   ██║   ███████╗   ██║   
+ ╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝   ╚═╝   
+      [XÁC THỰC TÀI KHOẢN TRÊN SSR — STATEFUL SESSION &amp; ZERO-TRUST BRUTE-FORCE DEFENSE]
+      </pre>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> BÁO CÁO ĐỒ ÁN BLOCK 8: XÁC THỰC TÀI KHOẢN TRÊN SSR</h1>
+      <p class="slide-desc">
+        Báo cáo toàn diện kiến thức xác thực bảo mật SSR (Slides 1–47), toàn bộ 7 nhóm yêu cầu bài tập (Slides 48–55), 
+        lý giải lựa chọn Tech Stack, 28 kịch bản nghiệm thu (Slides 58–61) và 6 câu hỏi vấn đáp bảo vệ đồ án (Slide 62).
+      </p>
+
+      <div class="grid-3" style="margin-top: 10px;">
+        <div class="term-box accent-border">
+          <div class="term-box-header">👨‍💻 NHÓM THỰC HIỆN · GROUP 02</div>
+          <ul>
+            <li><strong>24127491</strong> — MSSV 1</li>
+            <li><strong>24127144</strong> — MSSV 2</li>
+            <li><strong>24127043</strong> — MSSV 3</li>
+            <li>Học phần: Phát Triển Ứng Dụng Web (W6 - Block 8)</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">🛡️ CORE SECURITY PILLARS</div>
+          <ul>
+            <li><strong>Mật khẩu:</strong> Bcrypt (Cost = 10) + Salt ngẫu nhiên</li>
+            <li><strong>Token/OTP:</strong> High-Entropy + SHA-256 + TimingSafeEqual</li>
+            <li><strong>Session:</strong> Persistent PostgreSQL + Regenerate SID</li>
+            <li><strong>Defense:</strong> Turnstile CAPTCHA + Lockout HTTP 429</li>
+          </ul>
+        </div>
+
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">⌨️ ĐIỀU KHIỂN SLIDE</div>
+          <ul>
+            <li><kbd>→</kbd> hoặc <kbd>SPACE</kbd>: Slide tiếp theo</li>
+            <li><kbd>←</kbd> hoặc <kbd>BACKSPACE</kbd>: Lùi slide trước</li>
+            <li><kbd>O</kbd> hoặc <kbd>ESC</kbd>: Bật lưới tổng quan (Grid View)</li>
+            <li><kbd>F</kbd>: Toàn màn hình · <kbd>T</kbd>: Đổi theme màu</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 02: TABLE OF CONTENTS & SYSTEM MAP -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="2" data-title="[MAP] Mục Lục & Cấu Trúc Hệ Thống">
+      <div class="slide-meta">
+        <div><span class="tag">INDEX</span> :: SYSTEM_DIRECTORY_TREE</div>
+        <div>TOTAL SLIDES: 23 · LECTURE_REF: BLOCK8-DECK.HTML</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">tree -L 2 /src/ --charset=ascii</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> MỤC LỤC & BẢN ĐỒ KIẾN THỨC BÁO CÁO</h1>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">📚 PHẦN I — KIẾN THỨC CỐT LÕI (SLIDES 3 - 8)</div>
+          <ul>
+            <li><strong>Slide 03:</strong> Authentication vs Authorization &amp; Vòng đời tài khoản SSR</li>
+            <li><strong>Slide 04:</strong> Mật khẩu: Salt &amp; Slow Hash (Bcrypt Cost 10) vs GPU Fast Hash</li>
+            <li><strong>Slide 05:</strong> OTP &amp; Reset Token: SHA-256 + Timing-Safe Comparison</li>
+            <li><strong>Slide 06:</strong> Session: Session ID vs Session Data &amp; 3 Cờ Cookie bảo mật</li>
+            <li><strong>Slide 07:</strong> Chống Session Fixation &amp; CSRF Synchronizer Token Pattern</li>
+            <li><strong>Slide 08:</strong> Kiến trúc Tech Stack &amp; Lý do lựa chọn công nghệ</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">⚙️ PHẦN II — YÊU CẦU BÀI TẬP & CODE (SLIDES 9 - 16)</div>
+          <ul>
+            <li><strong>Slide 09:</strong> 6 Models Database trong `schema.prisma` (Slide 49)</li>
+            <li><strong>Slide 10:</strong> `POST /register`: Turnstile CAPTCHA trước khi băm, Role: viewer (Slide 50)</li>
+            <li><strong>Slide 11:</strong> `POST /activate`: Transaction OTP nguyên tử, Timing-safe (Slide 51)</li>
+            <li><strong>Slide 12:</strong> `POST /activate/resend`: Cooldown 60s, giữ nguyên attempts (Slide 51)</li>
+            <li><strong>Slide 13:</strong> `POST /login`: CAPTCHA, chặn tài khoản pending (Slide 52)</li>
+            <li><strong>Slide 14:</strong> Rate Limiter: Cửa sổ 15 phút, khóa 5 phút (HTTP 429) (Slide 53)</li>
+            <li><strong>Slide 15:</strong> `POST /logout` &amp; `requireAuth` Middleware (Slide 54)</li>
+            <li><strong>Slide 16:</strong> `POST /forgot` &amp; `POST /reset`: Hủy toàn bộ phiên (Slide 55)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 16px;">
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">🔄 PHẦN III — SƠ ĐỒ LUỒNG DỮ LIỆU (SLIDES 17 - 19)</div>
+          <ul>
+            <li><strong>Slide 17:</strong> Sequence Flow: Đăng ký &amp; Kích hoạt OTP</li>
+            <li><strong>Slide 18:</strong> Sequence Flow: Đăng nhập &amp; Chống Brute-force</li>
+            <li><strong>Slide 19:</strong> Sequence Flow: Quên mật khẩu &amp; Thu hồi đa phiên</li>
+          </ul>
+        </div>
+
+        <div class="term-box purple-border">
+          <div class="term-box-header purple">🎯 PHẦN IV — NGHIỆM THU & VẤN ĐÁP (SLIDES 20 - 23)</div>
+          <ul>
+            <li><strong>Slide 20:</strong> Bảng 28 Kịch bản nghiệm thu chuẩn (Slides 58–61)</li>
+            <li><strong>Slide 21:</strong> 6 Câu hỏi vấn đáp bảo vệ đồ án (Slide 62)</li>
+            <li><strong>Slide 22:</strong> Checklist kiểm tra mã nguồn &amp; Bắt lỗi AI Agent (Slide 57, 63)</li>
+            <li><strong>Slide 23:</strong> Lời kết &amp; Tham chiếu mã nguồn</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 03: AUTH VS AUTHZ & SSR MODEL -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="3" data-title="[THEORY] Auth vs Authz & Vòng Đời SSR">
+      <div class="slide-meta">
+        <div><span class="tag">THEORY_01</span> :: AUTH_MODEL_AND_LIFECYCLE</div>
+        <div>SLIDE DECK REF: SLIDES 4 - 8</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat docs/auth-vs-authz.md</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> AUTHENTICATION VS AUTHORIZATION &amp; VÒNG ĐỜI SSR</h1>
+      <p class="slide-desc">
+        Trong SSR, máy chủ chịu trách nhiệm toàn bộ việc định danh người dùng (Who are you?), phân quyền (What can you do?) và render HTML tương ứng với trạng thái phiên.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">🔑 1. AUTHENTICATION (XÁC THỰC)</div>
+          <p><strong>Khái niệm:</strong> Trả lời câu hỏi <em>"Bạn là ai?"</em> thông qua việc kiểm tra chứng chỉ (Credentials: Email, Password, OTP Code).</p>
+          <ul style="margin-top: 8px;">
+            <li>Mã lỗi chuẩn: <span class="badge red">HTTP 401 UNAUTHORIZED</span></li>
+            <li>Chưa đăng nhập truy cập trang nội bộ &rarr; Máy chủ SSR chuyển hướng <span class="badge cyan">HTTP 303</span> về trang <code>/login</code>.</li>
+            <li>Mọi cơ chế định danh trên SSR gắn liền với <strong>Session ID (sid)</strong> lưu trong Cookie.</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">🛡️ 2. AUTHORIZATION (PHÂN QUYỀN)</div>
+          <p><strong>Khái niệm:</strong> Trả lời câu hỏi <em>"Bạn có quyền thực hiện hành động này không?"</em> dựa trên Vai trò (Role) hoặc Quyền (Permission).</p>
+          <ul style="margin-top: 8px;">
+            <li>Mã lỗi chuẩn: <span class="badge red">HTTP 403 FORBIDDEN</span></li>
+            <li>Người dùng đã đăng nhập (role: <code>viewer</code>) cố tình truy cập tuyến <code>/admin/dishes/create</code> &rarr; Chặn với HTTP 403.</li>
+            <li>Tài khoản đang ở trạng thái <code>pending</code> cố tình truy cập hoặc đăng nhập &rarr; Chặn với HTTP 403.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="term-box amber-border" style="margin-top: 16px;">
+        <div class="term-box-header amber">🔄 VÒNG ĐỜI TRẠNG THÁI TÀI KHOẢN (USER LIFECYCLE)</div>
+        <pre class="ascii-diagram">
+ [POST /register]               [POST /activate (Đúng OTP)]            [Vi phạm quy chế / Admin]
+       │                                     │                                      │
+       ▼                                     ▼                                      ▼
+┌──────────────┐                       ┌──────────────┐                       ┌──────────────┐
+│   PENDING    │ ────────────────────► │    ACTIVE    │ ────────────────────► │   LOCKED /   │
+│ (Chờ mã OTP) │   Nhập sai OTP &gt;= 5   │ (Bình thường)│  Sai pass &gt;= 10      │   DISABLED   │
+└──────────────┘           │           └──────────────┘         │             └──────────────┘
+       │                   ▼                                    ▼                    │
+       │           ┌──────────────┐                     ┌──────────────┐             │
+       └─────────► │  HTTP 429    │                     │  HTTP 429    │ ◄───────────┘
+                   │ Tạm khóa 5m  │                     │ Khóa đăngnhập│
+                   └──────────────┘                     └──────────────┘
+        </pre>
+        <p style="margin-top: 8px; font-size: 0.82rem; color: var(--text-muted);">
+          <strong>Quy tắc bất biến:</strong> Tài khoản ở trạng thái <code>pending</code> dù nhập đúng mật khẩu ở <code>POST /login</code> thì máy chủ <strong>tuyệt đối KHÔNG cấp session</strong>, chặn với mã <code>HTTP 403</code> và yêu cầu hoàn tất kích hoạt OTP.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 04: PASSWORD SECURITY & BCRYPT -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="4" data-title="[THEORY] Mật Khẩu: Salt & Slow Hash (Bcrypt)">
+      <div class="slide-meta">
+        <div><span class="tag">THEORY_02</span> :: PASSWORD_CRYPTOGRAPHY</div>
+        <div>SLIDE DECK REF: SLIDES 14 - 17</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat docs/password-hashing-bcrypt.md</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> MẬT KHẨU: SALT &amp; SLOW HASH (BCRYPT COST 10)</h1>
+      <p class="slide-desc">
+        Mật khẩu là bí mật dài hạn của người dùng. Tuyệt đối không bao giờ lưu plain text hoặc sử dụng các hàm băm nhanh (MD5, SHA-1, SHA-256) để lưu mật khẩu.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box red-border">
+          <div class="term-box-header red">❌ TẠI SAO FAST HASH (SHA-256 / MD5) THẤT BẠI?</div>
+          <ul>
+            <li><strong>Thiết kế cho toàn vẹn dữ liệu:</strong> SHA-256 được thiết kế để chạy nhanh nhất có thể (hàng tỷ phép tính/giây trên chip ASIC/GPU).</li>
+            <li><strong>Bị bẻ khóa dễ dàng:</strong> Một card đồ họa phổ thông (NVIDIA RTX 4090) có thể thử <strong>hơn 20 tỷ hash SHA-256/giây</strong>. Hacker có thể duyệt sạch mọi từ điển mật khẩu 8–10 ký tự chỉ trong vài phút.</li>
+            <li><strong>Rainbow Table:</strong> Nếu không có Salt ngẫu nhiên, các bảng băm tính sẵn (Rainbow Table) có thể tra ngược mật khẩu tức thì.</li>
+          </ul>
+        </div>
+
+        <div class="term-box accent-border">
+          <div class="term-box-header">✅ TẠI SAO BCRYPT LÀ CHUẨN MỰC BẢO MẬT?</div>
+          <ul>
+            <li><strong>Tự động sinh Salt ngẫu nhiên:</strong> Mỗi mật khẩu khi băm đều gắn 1 Salt 128-bit độc nhất. Hai người dùng có cùng mật khẩu <code>Password@123</code> vẫn ra 2 chuỗi hash hoàn toàn khác nhau.</li>
+            <li><strong>Slow Hash &amp; Work Factor:</strong> Bcrypt sử dụng thuật toán băm chậm thích ứng (Eksblowfish). Dự án cấu hình <strong>Cost = 10</strong> ($2^{10} = 1.024$ vòng lặp), mất ~100ms cho 1 lần tính toán trên CPU.</li>
+            <li><strong>Triệt tiêu tấn công phần cứng:</strong> 100ms không ảnh hưởng trải nghiệm người dùng lúc đăng nhập, nhưng làm chậm tốc độ brute-force của hacker từ 20 tỷ hash/giây xuống còn dưới 1.000 hash/giây!</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-container">
+        <div class="code-bar">
+          <span>MINH HỌA CẤU TRÚC CHUỖI BCRYPT HASH LƯU TRONG DATABASE</span>
+          <span class="file">User.passwordHash</span>
+        </div>
+        <pre class="code-body">
+<span class="hl">$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy</span>
+├──┘ ├──┘ ├────────────────────┤├─────────────────────────────┤
+ │    │              │                         │
+ │    │              │                         └── 31 ký tự: BCRYPT CHECKSUM
+ │    │              └──────────────────────────── 22 ký tự: 128-bit RANDOM SALT (Tự động sinh)
+ │    └─────────────────────────────────────────── Cost Factor = 10 (2^10 = 1,024 rounds)
+ └──────────────────────────────────────────────── Algorithm Identifier (2a = Bcrypt)
+        </pre>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 05: OTP & RESET TOKEN CRYPTOGRAPHY -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="5" data-title="[THEORY] OTP & Reset Token Cryptography">
+      <div class="slide-meta">
+        <div><span class="tag">THEORY_03</span> :: TOKEN_SECURITY_TIMING_SAFE</div>
+        <div>SLIDE DECK REF: SLIDES 18 - 19, 39 - 43</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/utils/cryptoTokens.js</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> OTP &amp; RESET TOKEN: SHA-256 + TIMING-SAFE EQUAL</h1>
+      <p class="slide-desc">
+        Khác với mật khẩu dài hạn, OTP và Reset Token là bí mật ngắn hạn (Ephemeral Secrets). Dự án áp dụng mô hình băm SHA-256 một chiều và so sánh an toàn thời gian.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">❓ TOKEN NGẮN HẠN CÓ CẦN BCRYPT KHÔNG?</div>
+          <p><strong>Trả lời: KHÔNG CẦN BCRYPT</strong> vì 2 nguyên nhân cốt lõi:</p>
+          <ul>
+            <li><strong>High Entropy / Short Expiry:</strong> Reset Token là chuỗi 32 bytes ngẫu nhiên mật mã học (256-bit entropy). Không gian mẫu $2^{256}$ là bất khả thi để brute-force.</li>
+            <li><strong>OTP có giới hạn thử nghiệm (Rate Limit):</strong> Mã OTP 6 số chỉ cho phép thử tối đa 5 lần và hết hạn trong 10 phút. Kẻ tấn công không thể thử vét cạn offline.</li>
+            <li>Dùng <strong>SHA-256</strong> lưu vào cột <code>otpHash</code> và <code>tokenHash</code>: DB bị lộ hacker vẫn không thể biết plain token gửi qua email.</li>
+          </ul>
+        </div>
+
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">⏱️ NGUY CƠ TIMING ATTACK & GIẢI PHÁP</div>
+          <p><strong>Hiểm họa:</strong> Toán tử <code>===</code> so sánh chuỗi theo kiểu ngắt sớm (Early-return). Ký tự đầu tiên sai sẽ dừng ngay, ký tự đầu đúng sẽ mất nhiều thời gian hơn một chút.</p>
+          <ul style="margin-top: 6px;">
+            <li>Hacker đo độ trễ mạng micro-giây để đoán từng ký tự của token.</li>
+            <li><strong>Giải pháp bắt buộc:</strong> Băm input sang SHA-256 buffer cùng độ dài 32-byte, sau đó dùng hàm chuẩn <code>crypto.timingSafeEqual()</code> để so sánh với thời gian cố định hằng số $O(1)$.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-container">
+        <div class="code-bar">
+          <span>CODE THỰC TẾ: HÀM SO SÁNH AN TOÀN TRÁNH TIMING ATTACK</span>
+          <span class="file">src/utils/cryptoTokens.js</span>
+        </div>
+        <pre class="code-body">
+<span class="kw">function</span> <span class="fn">timingSafeCompare</span>(userInput, storedHash) {
+  <span class="kw">if</span> (!userInput || !storedHash) <span class="kw">return false</span>;
+  
+  <span class="comment">// Băm input của người dùng bằng SHA-256 tạo thành Buffer độ dài 32 bytes</span>
+  <span class="kw">const</span> inputHashBuffer = crypto.<span class="fn">createHash</span>(<span class="str">'sha256'</span>).<span class="fn">update</span>(String(userInput).trim()).<span class="fn">digest</span>();
+  <span class="kw">const</span> storedHashBuffer = Buffer.<span class="fn">from</span>(storedHash, <span class="str">'hex'</span>);
+
+  <span class="kw">if</span> (inputHashBuffer.length !== storedHashBuffer.length) <span class="kw">return false</span>;
+
+  <span class="comment">// So sánh hằng số thời gian O(1) - không bị ngắt sớm, triệt tiêu Side-Channel Timing Attack</span>
+  <span class="kw">return</span> crypto.<span class="fn">timingSafeEqual</span>(inputHashBuffer, storedHashBuffer);
+}
+        </pre>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 06: SESSION & COOKIE SECURITY -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="6" data-title="[THEORY] Session ID vs Session Data & Cookie Flags">
+      <div class="slide-meta">
+        <div><span class="tag">THEORY_04</span> :: SESSION_ARCHITECTURE_COOKIE_FLAGS</div>
+        <div>SLIDE DECK REF: SLIDES 28 - 32</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/app.js | grep -A 20 "session("</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> SESSION ID VS SESSION DATA &amp; 3 CỜ COOKIE</h1>
+      <p class="slide-desc">
+        Trong kiến trúc SSR, phiên đăng nhập là Stateful. Trình duyệt chỉ giữ "vé định danh" (Session ID), còn toàn bộ thông tin nhạy cảm nằm an toàn trên PostgreSQL.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">📦 1. SESSION ID TRÊN CLIENT VS SESSION DATA TRÊN SERVER</div>
+          <ul>
+            <li><strong>Client (Browser):</strong> Chỉ lưu chuỗi Session ID ký mật mã trong cookie tên <code>sid</code>. Client không giữ bất kỳ thông tin nào về role hay user ID.</li>
+            <li><strong>Server (PostgreSQL):</strong> Bảng <code>Session</code> lưu bản ghi JSON phiên: <code>{ user: { id, name, role, status }, csrfToken }</code>.</li>
+            <li><strong>Lợi ích:</strong> Nếu tài khoản bị khóa hoặc đổi mật khẩu, server có thể xóa ngay bản ghi trong DB để vô hiệu hóa phiên lập tức.</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">🍪 2. BỘ BA CỜ COOKIE BẮT BUỘC</div>
+          <ul>
+            <li><span class="badge green">HttpOnly</span>: Chặn hoàn toàn JavaScript truy cập cookie qua <code>document.cookie</code>. Ngăn chặn hacker đánh cắp phiên khi có lỗ hổng XSS.</li>
+            <li><span class="badge cyan">SameSite=Lax</span>: Không gửi cookie theo các request chéo trang độc hại (Cross-site POST). Giảm thiểu nguy cơ CSRF.</li>
+            <li><span class="badge amber">Secure</span>: Chỉ gửi cookie qua kết nối mã hóa HTTPS (ở môi trường Production), chống đánh cắp gói tin qua Man-In-The-Middle.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-container">
+        <div class="code-bar">
+          <span>CẤU HÌNH EXPRESS-SESSION VỚI PERSISTENT PRISMA STORE TRONG DỰ ÁN</span>
+          <span class="file">src/app.js</span>
+        </div>
+        <pre class="code-body">
+app.<span class="fn">use</span>(
+  <span class="fn">session</span>({
+    name: <span class="str">'sid'</span>,                               <span class="comment">// Đặt tên cookie rõ ràng, không dùng connect.sid mặc định</span>
+    store: <span class="kw">new</span> <span class="fn">PrismaSessionStore</span>({ ttlMs: <span class="num">12 * 60 * 60 * 1000</span> }), <span class="comment">// Bền vững qua khởi động lại server</span>
+    secret: process.env.SESSION_SECRET,
+    resave: <span class="kw">false</span>,
+    saveUninitialized: <span class="kw">false</span>,
+    cookie: {
+      path: <span class="str">'/'</span>,
+      httpOnly: <span class="kw">true</span>,                           <span class="comment">// Chống XSS đọc trộm session</span>
+      sameSite: <span class="str">'lax'</span>,                          <span class="comment">// Chống CSRF</span>
+      secure: process.env.NODE_ENV === <span class="str">'production'</span>,
+      maxAge: <span class="num">12 * 60 * 60 * 1000</span>               <span class="comment">// 12 giờ cho người dùng thông thường</span>
+    }
+  })
+);
+        </pre>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 07: SESSION FIXATION & CSRF PROTECTION -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="7" data-title="[THEORY] Chống Session Fixation & CSRF Token">
+      <div class="slide-meta">
+        <div><span class="tag">THEORY_05</span> :: SESSION_FIXATION_AND_CSRF</div>
+        <div>SLIDE DECK REF: SLIDES 33 - 37</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/middlewares/csrfMiddleware.js</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> CHỐNG SESSION FIXATION &amp; CSRF TOKEN PATTERN</h1>
+      <p class="slide-desc">
+        Hai lỗ hổng kinh điển trên các ứng dụng SSR là Cố định phiên (Session Fixation) và Giả mạo yêu cầu chéo trang (Cross-Site Request Forgery).
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">🔄 1. TẤN CÔNG SESSION FIXATION LÀ GÌ?</div>
+          <p><strong>Kịch bản:</strong> Kẻ tấn công tạo sẵn 1 Session ID ẩn danh trên server, dụ nạn nhân nhấp link để gán cookie đó. Khi nạn nhân đăng nhập thành công, nếu server <em>không đổi Session ID</em>, kẻ tấn công dùng lại Session ID cũ để chiếm tài khoản.</p>
+          <p style="margin-top: 8px;"><strong>Giải pháp bắt buộc (Slide 33):</strong> Gọi <code>req.session.regenerate()</code> ngay khi đăng nhập để hủy bỏ Session ID ẩn danh và cấp 1 Session ID mới toanh gắn với quyền hạn người dùng.</p>
+        </div>
+
+        <div class="term-box purple-border">
+          <div class="term-box-header purple">🛡️ 2. CSRF SYNCHRONIZER TOKEN PATTERN</div>
+          <p><strong>Nguyên lý:</strong> Trình duyệt tự động gửi cookie khi submit form. Trang web độc hại có thể lừa người dùng gửi request POST đổi thông tin.</p>
+          <ul style="margin-top: 8px;">
+            <li>Server sinh mã bí mật <code>csrfToken</code> (24 bytes hex) lưu trong session.</li>
+            <li>Render token vào thẻ ẩn trong mọi form: <code>&lt;input type="hidden" name="_csrf" value="..."&gt;</code>.</li>
+            <li>Khi nhận request POST, middleware kiểm tra <code>req.body._csrf === req.session.csrfToken</code>. Trang web bên thứ 3 không thể đọc token này.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-container">
+        <div class="code-bar">
+          <span>CODE THỰC TẾ: BẢO VỆ CSRF ĐỒNG BỘ VỚI MỌI METHOD THAY ĐỔI DỮ LIỆU</span>
+          <span class="file">src/middlewares/csrfMiddleware.js</span>
+        </div>
+        <pre class="code-body">
+<span class="kw">function</span> <span class="fn">verifyCsrfToken</span>(req, res, next) {
+  <span class="comment">// Các phương thức an toàn (GET, HEAD, OPTIONS) không yêu cầu token</span>
+  <span class="kw">if</span> ([<span class="str">'GET'</span>, <span class="str">'HEAD'</span>, <span class="str">'OPTIONS'</span>].<span class="fn">includes</span>(req.method)) <span class="kw">return next</span>();
+
+  <span class="kw">const</span> tokenFromForm = req.body?._csrf || req.headers[<span class="str">'x-csrf-token'</span>];
+  <span class="kw">const</span> tokenInSession = req.session?.csrfToken;
+
+  <span class="kw">if</span> (!tokenFromForm || !tokenInSession || tokenFromForm !== tokenInSession) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">403</span>).<span class="fn">render</span>(<span class="str">'403'</span>, {
+      title: <span class="str">'403 - Lỗi CSRF'</span>,
+      message: <span class="str">'Yêu cầu bị từ chối do mã xác thực CSRF không hợp lệ hoặc phiên làm việc đã hết hạn.'</span>
+    });
+  }
+  <span class="kw">return next</span>();
+}
+        </pre>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 08: TECH STACK JUSTIFICATION -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="8" data-title="[TECH] Lý Giải Lựa Chọn Tech Stack">
+      <div class="slide-meta">
+        <div><span class="tag">TECH_STACK</span> :: ARCHITECTURAL_DECISIONS</div>
+        <div>SLIDE DECK REF: SLIDES 48 - 63</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat docs/techstack-justification.md</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> LÝ GIẢI LỰA CHỌN CÔNG NGHỆ (TECH STACK)</h1>
+      <p class="slide-desc">
+        Mọi công nghệ trong dự án được lựa chọn dựa trên yêu cầu bảo mật nghiêm ngặt của bài tập, độ tin cậy và sự phù hợp hoàn hảo với kiến trúc SSR.
+      </p>
+
+      <div class="grid-3">
+        <div class="term-box accent-border">
+          <div class="term-box-header">1. NODE.JS + EXPRESS 5 + EJS</div>
+          <ul>
+            <li><strong>Kiểm soát giao thức HTTP cấp thấp:</strong> Dễ dàng can thiệp header <code>Set-Cookie</code>, mã phản hồi <code>303 See Other</code>, <code>429 Too Many Requests</code>.</li>
+            <li><strong>Render SSR an toàn:</strong> Render trực tiếp <code>_csrf</code> token và Cloudflare widget vào HTML thuần; không lưu session vào <code>localStorage</code> giúp loại bỏ hoàn toàn nguy cơ rò rỉ token qua XSS.</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">2. POSTGRESQL + PRISMA ORM</div>
+          <ul>
+            <li><strong>ACID Atomic Transactions:</strong> Hỗ trợ <code>prisma.$transaction([...])</code> đảm bảo kích hoạt OTP (cập nhật User + đánh dấu usedAt) hoặc reset mật khẩu diễn ra nguyên tử tuyệt đối.</li>
+            <li><strong>Strict Schemas:</strong> Ràng buộc chặt chẽ quan hệ 1:1, 1:N giữa 6 bảng xác thực và tự động tạo chỉ mục trên các cột tra cứu email chuẩn hóa.</li>
+          </ul>
+        </div>
+
+        <div class="term-box purple-border">
+          <div class="term-box-header purple">3. CUSTOM PRISMA SESSION STORE</div>
+          <ul>
+            <li><strong>Phiên bền vững:</strong> Kế thừa <code>session.Store</code> lưu dữ liệu vào bảng <code>Session</code> trên PostgreSQL. Không mất phiên khi restart server như MemoryStore.</li>
+            <li><strong>Quản lý phiên cấp độ DB:</strong> Có cột tường minh <code>userId</code>, cho phép thực thi lệnh hủy toàn bộ phiên của 1 người dùng (Multi-session revocation) chỉ bằng 1 câu lệnh <code>deleteMany</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top: 14px;">
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">4. CLOUDFLARE TURNSTILE CAPTCHA</div>
+          <ul>
+            <li><strong>Trải nghiệm mượt mà (Zero Friction):</strong> Không bắt người dùng giải đố chọn đèn giao thông/biển báo phiền toái như Google reCAPTCHA v2.</li>
+            <li><strong>Chống Bot &amp; Brute-Force:</strong> Xác thực server-to-server qua <code>/turnstile/v0/siteverify</code>. Kết hợp bảng <code>CaptchaChallenge</code> một lần trong DB để ngăn chặn replay token.</li>
+          </ul>
+        </div>
+
+        <div class="term-box red-border">
+          <div class="term-box-header red">5. BCRYPTJS + NODE CRYPTO</div>
+          <ul>
+            <li><strong>Phân chia nhiệm vụ đúng đắn:</strong> Dùng <code>bcryptjs</code> (Cost = 10) băm mật khẩu dài hạn; dùng Node <code>crypto</code> (SHA-256 + <code>timingSafeEqual</code>) băm OTP và Reset Token ngắn hạn.</li>
+            <li><strong>Không phụ thuộc binary native build:</strong> <code>bcryptjs</code> chạy ổn định 100% trên mọi hệ điều hành (Windows, Linux, macOS) mà không gặp lỗi node-gyp.</li>
+          </ul>
+        </div>
+
+        <div class="term-box accent-border">
+          <div class="term-box-header">6. NODEMAILER (SMTP)</div>
+          <ul>
+            <li><strong>Linh hoạt môi trường:</strong> Tích hợp chuẩn SMTP gửi email kích hoạt OTP và link reset mật khẩu.</li>
+            <li><strong>Kiểm thử cục bộ:</strong> Hỗ trợ Mailpit / Ethereal Email khi dev trên máy cục bộ và Gmail SMTP khi triển khai thực tế.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 09: DB SCHEMA (6 MODELS) -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="9" data-title="[SCHEMA] 6 Models Database (Slide 49)">
+      <div class="slide-meta">
+        <div><span class="tag">PRISMA_SCHEMA</span> :: 6_CORE_MODELS</div>
+        <div>SLIDE DECK REF: SLIDE 49</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat prisma/schema.prisma | grep -A 15 "model User"</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> 6 MODELS DATABASE CHO HỆ THỐNG XÁC THỰC</h1>
+      <p class="slide-desc">
+        Thiết kế cơ sở dữ liệu tuân thủ tuyệt đối Slide 49 với 6 bảng chuyên biệt, phục vụ đầy đủ vòng đời tài khoản, rate limiting và lưu trữ phiên.
+      </p>
+
+      <div class="grid-3">
+        <div class="term-box accent-border">
+          <div class="term-box-header">1. MODEL USER</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Bảng người dùng chính:</p>
+          <ul style="font-size: 0.78rem;">
+            <li><code>id</code> (String, UUID)</li>
+            <li><code>email</code> (String, Unique, đã chuẩn hóa)</li>
+            <li><code>rawEmail</code> (String, giữ nguyên bản)</li>
+            <li><code>passwordHash</code> (String, băm bcrypt)</li>
+            <li><code>role</code> (String, default: "viewer")</li>
+            <li><code>status</code> ("pending" | "active" | "locked")</li>
+            <li><code>isVerified</code> (Boolean, default: false)</li>
+            <li><code>emailVerifiedAt</code> (DateTime, nullable)</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">2. ACTIVATION CHALLENGE</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Quản lý mã OTP kích hoạt:</p>
+          <ul style="font-size: 0.78rem;">
+            <li><code>userId</code> (String, Unique &rarr; 1:1 với User)</li>
+            <li><code>otpHash</code> (String, SHA-256)</li>
+            <li><code>expiresAt</code> (DateTime, 10 phút)</li>
+            <li><code>attempts</code> (Int, đếm sai, max 5)</li>
+            <li><code>resendCount</code> (Int, đếm gửi lại, max 5)</li>
+            <li><code>lastSentAt</code> (DateTime, cooldown 60s)</li>
+            <li><code>lockedUntil</code> (DateTime, nullable)</li>
+            <li><code>usedAt</code> (DateTime, đánh dấu đã dùng)</li>
+          </ul>
+        </div>
+
+        <div class="term-box purple-border">
+          <div class="term-box-header purple">3. PASSWORD RESET</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Quản lý yêu cầu quên mật khẩu:</p>
+          <ul style="font-size: 0.78rem;">
+            <li><code>userId</code> (String, 1:N với User)</li>
+            <li><code>tokenHash</code> (String, SHA-256)</li>
+            <li><code>expiresAt</code> (DateTime, 15 phút)</li>
+            <li><code>usedAt</code> (DateTime, 1 lần duy nhất)</li>
+            <li><code>createdAt</code> (DateTime)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top: 14px;">
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">4. MODEL SESSION</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Lưu trữ phiên đăng nhập bền vững:</p>
+          <ul style="font-size: 0.78rem;">
+            <li><code>id</code> (String, Primary Key)</li>
+            <li><code>sid</code> (String, Unique)</li>
+            <li><code>data</code> (Text, JSON session data)</li>
+            <li><code>expiresAt</code> (DateTime)</li>
+            <li><code>userId</code> (String, nullable &rarr; Hỗ trợ thu hồi toàn bộ phiên của 1 User)</li>
+          </ul>
+        </div>
+
+        <div class="term-box red-border">
+          <div class="term-box-header red">5. LOGIN ATTEMPT</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Bộ đếm brute-force trong DB:</p>
+          <ul style="font-size: 0.78rem;">
+            <li><code>key</code> ("email:..." | "ip:...")</li>
+            <li><code>keyType</code> ("email" | "ip")</li>
+            <li><code>target</code> (email chuẩn hóa hoặc IP)</li>
+            <li><code>attempts</code> (Int, số lần đăng nhập sai)</li>
+            <li><code>windowStart</code> (DateTime, cửa sổ 15p)</li>
+            <li><code>lockedUntil</code> (DateTime, khóa 5 phút)</li>
+          </ul>
+        </div>
+
+        <div class="term-box accent-border">
+          <div class="term-box-header">6. CAPTCHA CHALLENGE</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Thử thách Turnstile một lần:</p>
+          <ul style="font-size: 0.78rem;">
+            <li><code>id</code> (String, challengeId ẩn trong form)</li>
+            <li><code>purpose</code> ("register" | "login")</li>
+            <li><code>sessionId</code> (String, gắn với phiên)</li>
+            <li><code>tokenHash</code> (String, nullable)</li>
+            <li><code>expiresAt</code> (DateTime, 5 phút)</li>
+            <li><code>usedAt</code> (DateTime, chống replay)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 10: REQ 01 - POST /register -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="10" data-title="[REQ_01] Luồng Đăng Ký (POST /register)">
+      <div class="slide-meta">
+        <div><span class="tag">REQUIREMENT_01</span> :: POST_REGISTER_PIPELINE</div>
+        <div>SLIDE DECK REF: SLIDE 50 · VERIFY: SCENARIOS 1 - 3</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/controllers/authController.js | grep -A 35 "exports.postRegister"</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> YÊU CẦU 1: LUỒNG ĐĂNG KÝ (POST /REGISTER)</h1>
+      <p class="slide-desc">
+        Đăng ký tài khoản tuân thủ quy trình 5 bước nghiêm ngặt: Kiểm tra rate limit IP &rarr; Xác minh CAPTCHA trước &rarr; Validate dữ liệu &rarr; Băm Bcrypt Cost 10 &rarr; Sinh OTP và chống User Enumeration.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">🛡️ 4 NGUYÊN TẮC BẢO MẬT BẮT BUỘC</div>
+          <ul>
+            <li><strong>1. CAPTCHA trước khi băm mật khẩu:</strong> Xác minh Cloudflare Turnstile token trước. Nếu token sai, trả <code>HTTP 400</code> ngay. Không bao giờ chạy <code>bcrypt.hash</code> khi chưa vượt qua CAPTCHA!</li>
+            <li><strong>2. Chuẩn hóa Email:</strong> <code>normalizeEmail()</code> loại bỏ khoảng trắng, chữ hoa, dấu chấm và tag của Gmail để chống trùng lặp tài khoản.</li>
+            <li><strong>3. Role mặc định là viewer:</strong> Luôn gán cứng <code>role = 'viewer'</code>, phớt lờ mọi trường <code>role</code> do client gửi lên form để chống leo thang đặc quyền.</li>
+            <li><strong>4. Chống User Enumeration:</strong> Nếu email đã tồn tại, không tạo tài khoản mới nhưng phản hồi ra ngoài giống hệt email mới (render trang OTP kèm thông báo chung).</li>
+          </ul>
+        </div>
+
+        <div class="code-container" style="margin-top: 0;">
+          <div class="code-bar">
+            <span>TRÍCH ĐOẠN XỬ LÝ POST /REGISTER</span>
+            <span class="file">authController.js:125-224</span>
+          </div>
+          <pre class="code-body">
+<span class="comment">// 1. Rate Limit IP</span>
+<span class="kw">const</span> rateLimit = <span class="kw">await</span> <span class="fn">checkAndIncrementRegisterRateLimit</span>(req.ip);
+<span class="kw">if</span> (!rateLimit.allowed) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">429</span>).<span class="fn">render</span>(<span class="str">'429'</span>);
+
+<span class="comment">// 2. BẮT BUỘC xác minh CAPTCHA TRƯỚC KHI băm mật khẩu</span>
+<span class="kw">const</span> captchaResult = <span class="kw">await</span> <span class="fn">verifyCaptchaChallenge</span>({
+  challengeId, turnstileToken, purpose: <span class="str">'register'</span>, sessionId: req.sessionID, remoteip: req.ip
+});
+<span class="kw">if</span> (!captchaResult.success) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">render</span>(<span class="str">'public/register'</span>, { errors: [captchaResult.message] });
+
+<span class="comment">// 3. Băm mật khẩu và tạo user pending nếu là email mới</span>
+<span class="kw">if</span> (!existingUser) {
+  <span class="kw">const</span> passwordHash = <span class="kw">await</span> bcrypt.<span class="fn">hash</span>(password, <span class="num">10</span>);
+  <span class="kw">const</span> otpCode = <span class="fn">generateSixDigitOtp</span>();
+  <span class="kw">await</span> prisma.user.<span class="fn">create</span>({
+    data: {
+      name: trimmedName, email: normalizedEmail, rawEmail, passwordHash,
+      role: <span class="str">'viewer'</span>, status: <span class="str">'pending'</span>, isVerified: <span class="kw">false</span>,
+      activationChallenge: { create: { otpHash: <span class="fn">hashValue</span>(otpCode), expiresAt, attempts: <span class="num">0</span>, resendCount: <span class="num">0</span> } }
+    }
+  });
+  <span class="kw">await</span> <span class="fn">sendActivationOtpEmail</span>(normalizedEmail, trimmedName, otpCode);
+}
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 11: REQ 02 - POST /activate -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="11" data-title="[REQ_02] Luồng Kích Hoạt OTP (POST /activate)">
+      <div class="slide-meta">
+        <div><span class="tag">REQUIREMENT_02</span> :: POST_ACTIVATE_TRANSACTION</div>
+        <div>SLIDE DECK REF: SLIDE 51 · VERIFY: SCENARIOS 4 - 6</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/controllers/authController.js | grep -A 35 "exports.postActivate"</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> YÊU CẦU 2: KÍCH HOẠT TÀI KHOẢN (POST /ACTIVATE)</h1>
+      <p class="slide-desc">
+        Xác thực mã kích hoạt 6 chữ số qua Transaction nguyên tử trong PostgreSQL, bảo vệ thời gian thực thi (Timing-Safe) và không tự động đăng nhập.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">🛡️ QUY TRÌNH XÁC MINH OTP NGUYÊN TỬ</div>
+          <ul>
+            <li><strong>1. Giới hạn số lần thử:</strong> Tối đa 5 lần nhập sai (<code>attempts &gt;= 5</code>) &rarr; Tạm khóa tài khoản, trả về mã <span class="badge red">HTTP 429</span>.</li>
+            <li><strong>2. So sánh Timing-Safe:</strong> Kiểm tra mã OTP bằng <code>timingSafeCompare(otpInput, challenge.otpHash)</code> để ngăn chặn side-channel timing attack.</li>
+            <li><strong>3. Transaction nguyên tử:</strong> Khi đúng OTP, thực thi <code>prisma.$transaction</code> đồng thời:
+              <br>• Cập nhật <code>User.status = 'active'</code>, <code>isVerified = true</code>, <code>emailVerifiedAt = now()</code>.
+              <br>• Cập nhật <code>ActivationChallenge.usedAt = now()</code> (chống dùng lại OTP).
+            </li>
+            <li><strong>4. KHÔNG TỰ ĐỘNG ĐĂNG NHẬP:</strong> Sau khi kích hoạt thành công, server trả về mã <span class="badge green">HTTP 303 REDIRECT</span> về <code>/login?activated=true</code>. Không tạo session tự động theo đúng Slide 51!</li>
+          </ul>
+        </div>
+
+        <div class="code-container" style="margin-top: 0;">
+          <div class="code-bar">
+            <span>TRÍCH ĐOẠN ATOMIC TRANSACTION KÍCH HOẠT OTP</span>
+            <span class="file">authController.js:338-375</span>
+          </div>
+          <pre class="code-body">
+<span class="comment">// Kiểm tra tính hợp lệ bằng so sánh an toàn thời gian</span>
+<span class="kw">const</span> isOtpValid = <span class="fn">timingSafeCompare</span>(otpInput, challenge.otpHash);
+
+<span class="kw">if</span> (!isOtpValid) {
+  <span class="kw">const</span> updatedAttempts = challenge.attempts + <span class="num">1</span>;
+  <span class="kw">await</span> prisma.activationChallenge.<span class="fn">update</span>({
+    where: { id: challenge.id },
+    data: { attempts: updatedAttempts, lockedUntil: updatedAttempts >= <span class="num">5</span> ? lockTime : <span class="kw">null</span> }
+  });
+  <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">render</span>(<span class="str">'public/activate'</span>, { errors: [<span class="str">'Mã OTP không chính xác hoặc đã hết hạn.'</span>] });
+}
+
+<span class="comment">// Kích hoạt nguyên tử qua Transaction</span>
+<span class="kw">await</span> prisma.<span class="fn">$transaction</span>([
+  prisma.user.<span class="fn">update</span>({
+    where: { id: user.id },
+    data: { status: <span class="str">'active'</span>, isVerified: <span class="kw">true</span>, emailVerifiedAt: now }
+  }),
+  prisma.activationChallenge.<span class="fn">update</span>({
+    where: { id: challenge.id },
+    data: { usedAt: now }
+  })
+]);
+
+<span class="comment">// KHÔNG tạo session - chuyển hướng 303 về trang login</span>
+<span class="kw">return</span> res.<span class="fn">redirect</span>(<span class="num">303</span>, <span class="str">'/login?activated=true'</span>);
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 12: REQ 03 - POST /activate/resend -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="12" data-title="[REQ_03] Gửi Lại OTP (POST /activate/resend)">
+      <div class="slide-meta">
+        <div><span class="tag">REQUIREMENT_03</span> :: POST_RESEND_ACTIVATION</div>
+        <div>SLIDE DECK REF: SLIDE 51 · VERIFY: SCENARIO 7</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/controllers/authController.js | grep -A 30 "exports.postResendActivation"</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> YÊU CẦU 3: GỬI LẠI MÃ OTP (POST /ACTIVATE/RESEND)</h1>
+      <p class="slide-desc">
+        Chống spam email và ngăn chặn gian lận số lần thử nghiệm bằng 3 lớp khóa nghiêm ngặt: Cooldown 60s, giới hạn tối đa 5 lần gửi lại và bảo toàn số lần thử sai.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">⏱️ 3 RÀNG BUỘC KỸ THUẬT QUAN TRỌNG NHẤT</div>
+          <ul>
+            <li><strong>1. Cooldown 60 giây giữa 2 lần gửi:</strong> Server tính khoảng thời gian <code>now - lastSentAt</code>. Nếu dưới 60.000 ms &rarr; trả ngay <span class="badge red">HTTP 429</span>.</li>
+            <li><strong>2. Giới hạn số lần gửi lại tối đa (Max 5 resends):</strong> Nếu <code>resendCount &gt;= 5</code> &rarr; khóa chức năng gửi lại, trả ngay <span class="badge red">HTTP 429</span>.</li>
+            <li><strong>3. BẢO TOÀN ATTEMPTS (KHÔNG RESET VỀ 0):</strong> Khi sinh mã OTP mới, server ghi đè <code>otpHash</code> và gia hạn <code>expiresAt</code>, nhưng <strong>giữ nguyên giá trị <code>attempts</code> cũ</strong>. Kẻ tấn công không thể gửi lại OTP để xóa số lần nhập sai!</li>
+          </ul>
+        </div>
+
+        <div class="code-container" style="margin-top: 0;">
+          <div class="code-bar">
+            <span>TRÍCH ĐOẠN BẢO VỆ GỬI LẠI OTP</span>
+            <span class="file">authController.js:415-438</span>
+          </div>
+          <pre class="code-body">
+<span class="comment">// 1. Kiểm tra Cooldown 60s -> chưa đủ thời gian trả 429</span>
+<span class="kw">const</span> elapsedSinceLastSend = now.getTime() - <span class="kw">new</span> Date(challenge.lastSentAt).getTime();
+<span class="kw">if</span> (elapsedSinceLastSend &lt; <span class="num">60000</span>) {
+  <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">429</span>).<span class="fn">render</span>(<span class="str">'429'</span>, {
+    message: <span class="str">'Vui lòng đợi đủ 60 giây giữa hai lần gửi lại OTP.'</span>
+  });
+}
+
+<span class="comment">// 2. Sinh mã OTP mới</span>
+<span class="kw">const</span> newOtpCode = <span class="fn">generateSixDigitOtp</span>();
+<span class="kw">const</span> newOtpHash = <span class="fn">hashValue</span>(newOtpCode);
+
+<span class="comment">// 3. Cập nhật DB: Ghi đè otpHash, tăng resendCount nhưng GIỮ NGUYÊN attempts!</span>
+<span class="kw">await</span> prisma.activationChallenge.<span class="fn">update</span>({
+  where: { id: challenge.id },
+  data: {
+    otpHash: newOtpHash,
+    expiresAt: <span class="kw">new</span> Date(now.getTime() + <span class="num">10 * 60 * 1000</span>),
+    lastSentAt: now,
+    resendCount: challenge.resendCount + <span class="num">1</span>
+    <span class="comment">// TUYỆT ĐỐI KHÔNG GÁN attempts: 0 !</span>
+  }
+});
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 13: REQ 04 - POST /login -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="13" data-title="[REQ_04] Luồng Đăng Nhập (POST /login)">
+      <div class="slide-meta">
+        <div><span class="tag">REQUIREMENT_04</span> :: POST_LOGIN_AUTHENTICATION</div>
+        <div>SLIDE DECK REF: SLIDE 52 · VERIFY: SCENARIOS 8 - 14</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/controllers/authController.js | grep -A 40 "exports.postLogin"</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> YÊU CẦU 4: LUỒNG ĐĂNG NHẬP (POST /LOGIN)</h1>
+      <p class="slide-desc">
+        Quy trình đăng nhập bảo mật đa tầng: Xác minh Turnstile CAPTCHA &rarr; Tra cứu &amp; So khớp Bcrypt &rarr; Chặn tài khoản pending (403) &rarr; Tái tạo Session ID chống Session Fixation.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">🔒 CÁC TIÊU CHÍ KỸ THUẬT ĐẠT CHUẨN</div>
+          <ul>
+            <li><strong>Bắt buộc CAPTCHA Turnstile:</strong> Form đăng nhập luôn có widget Cloudflare Turnstile, ngăn chặn bot tự động thử mật khẩu từ attempt đầu tiên.</li>
+            <li><strong>Thông báo lỗi thống nhất:</strong> Dù email không tồn tại hay mật khẩu sai đều trả chung 1 thông báo: <code>"Email hoặc mật khẩu không chính xác."</code> (HTTP 400). Giữ lại email, xóa trắng password.</li>
+            <li><strong>Chặn tài khoản pending:</strong> Nhập đúng mật khẩu nhưng <code>status === 'pending'</code> &rarr; trả <span class="badge red">HTTP 403</span>, tuyệt đối không tạo session.</li>
+            <li><strong>Chống Session Fixation:</strong> Khi đăng nhập thành công, gọi <code>req.session.regenerate()</code> để sinh <code>sid</code> mới toanh.</li>
+            <li><strong>Chuyển hướng chuẩn:</strong> Trả về mã <span class="badge green">HTTP 303 SEE OTHER</span> tới <code>/menu</code>.</li>
+          </ul>
+        </div>
+
+        <div class="code-container" style="margin-top: 0;">
+          <div class="code-bar">
+            <span>TRÍCH ĐOẠN REGENERATE SESSION & BẢO VỆ PENDING</span>
+            <span class="file">authController.js:566-608</span>
+          </div>
+          <pre class="code-body">
+<span class="comment">// 1. Chặn tài khoản pending dù đúng mật khẩu (Slide 21, 52)</span>
+<span class="kw">if</span> (user.status !== <span class="str">'active'</span>) {
+  <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">403</span>).<span class="fn">render</span>(<span class="str">'public/login'</span>, {
+    errors: [<span class="str">'Tài khoản đang chờ kích hoạt OTP. Vui lòng kích hoạt trước khi đăng nhập.'</span>],
+    values: { email: normalizedEmail }
+  });
+}
+
+<span class="comment">// 2. Đăng nhập thành công -> Xóa bộ đếm email, giữ giới hạn IP</span>
+<span class="kw">await</span> <span class="fn">clearEmailLoginAttempts</span>(normalizedEmail);
+
+<span class="comment">// 3. Sinh sid mới toanh chống Session Fixation (Slide 33, 52)</span>
+<span class="kw">return</span> req.session.<span class="fn">regenerate</span>((err) => {
+  req.session.user = { id: user.id, name: user.name, email: user.email, role: user.role, status: user.status };
+  req.session.csrfToken = crypto.<span class="fn">randomBytes</span>(<span class="num">24</span>).<span class="fn">toString</span>(<span class="str">'hex'</span>);
+  req.session.cookie.maxAge = <span class="num">12 * 60 * 60 * 1000</span>; <span class="comment">// 12 giờ</span>
+  
+  <span class="kw">return</span> req.session.<span class="fn">save</span>(() => res.<span class="fn">redirect</span>(<span class="num">303</span>, <span class="str">'/menu'</span>));
+});
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 14: REQ 05 - RATE LIMITING & BRUTE FORCE -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="14" data-title="[REQ_05] Brute-Force Rate Limiting (Slide 53)">
+      <div class="slide-meta">
+        <div><span class="tag">REQUIREMENT_05</span> :: BRUTE_FORCE_RATE_LIMITER</div>
+        <div>SLIDE DECK REF: SLIDE 53 · VERIFY: SCENARIOS 12 - 14</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/utils/loginRateLimiter.js | head -n 30</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> YÊU CẦU 5: CHỐNG BRUTE-FORCE VÀ RATE LIMITING</h1>
+      <p class="slide-desc">
+        Hệ thống phòng thủ brute-force được lưu trữ bền vững trong cơ sở dữ liệu PostgreSQL (bảng <code>LoginAttempt</code>), không bị mất khi khởi động lại server.
+      </p>
+
+      <div class="grid-3">
+        <div class="term-box accent-border">
+          <div class="term-box-header">1. CỬA SỔ THEO DÕI (WINDOW)</div>
+          <p><strong>15 phút trượt (Sliding Window):</strong></p>
+          <ul style="margin-top: 6px;">
+            <li>Ghi nhận độc lập theo 2 khóa: <code>email:&lt;email&gt;</code> và <code>ip:&lt;ip&gt;</code>.</li>
+            <li>Tự động reset bộ đếm khi đã quá 15 phút kể từ lần sai đầu tiên.</li>
+          </ul>
+        </div>
+
+        <div class="term-box red-border">
+          <div class="term-box-header red">2. NGƯỠNG KHÓA (LOCKOUT HTTP 429)</div>
+          <p><strong>Khóa tạm thời trong 5 phút:</strong></p>
+          <ul style="margin-top: 6px;">
+            <li>Đủ <strong>10 lần sai theo email</strong> &rarr; Khóa tài khoản 5 phút.</li>
+            <li>Đủ <strong>20 lần sai theo IP</strong> &rarr; Khóa địa chỉ IP 5 phút.</li>
+            <li>Khi đã bị khóa: Từ chối ngay bằng mã <code>HTTP 429</code> ở đầu route, kể cả có nhập đúng password hay giải CAPTCHA.</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">3. RESET AN TOÀN KHI THÀNH CÔNG</div>
+          <p><strong>Chính sách dọn dẹp bộ đếm:</strong></p>
+          <ul style="margin-top: 6px;">
+            <li>Đăng nhập thành công: Xóa bộ đếm theo email (<code>clearEmailLoginAttempts</code>).</li>
+            <li><strong>Giữ nguyên bộ đếm theo IP:</strong> Ngăn chặn kẻ tấn công dùng 1 IP thử luân phiên hàng loạt tài khoản khác nhau (Password Spraying).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-container" style="margin-top: 14px;">
+        <div class="code-bar">
+          <span>HÀM GHI NHẬN ĐĂNG NHẬP THẤT BẠI TRONG DATABASE</span>
+          <span class="file">src/utils/loginRateLimiter.js</span>
+        </div>
+        <pre class="code-body">
+<span class="kw">async function</span> <span class="fn">recordFailedLogin</span>(normalizedEmail, rawIp) {
+  <span class="kw">const</span> now = <span class="kw">new</span> Date();
+  <span class="kw">const</span> ip = <span class="fn">normalizeIp</span>(rawIp);
+  
+  <span class="comment">// 1. Tăng bộ đếm theo IP (Ngưỡng 20 lần -> Khóa 5 phút)</span>
+  <span class="kw">const</span> ipState = <span class="kw">await</span> <span class="fn">getAttemptRecord</span>(<span class="str">`ip:${ip}`</span>, <span class="str">'ip'</span>, ip);
+  <span class="kw">const</span> nextIpAttempts = ipState.attempts + <span class="num">1</span>;
+  <span class="kw">const</span> ipLockedUntil = nextIpAttempts >= <span class="num">20</span> ? <span class="kw">new</span> Date(now.getTime() + <span class="num">5 * 60 * 1000</span>) : <span class="kw">null</span>;
+  <span class="kw">await</span> prisma.loginAttempt.<span class="fn">upsert</span>({ ... });
+
+  <span class="comment">// 2. Tăng bộ đếm theo Email (Ngưỡng 10 lần -> Khóa 5 phút)</span>
+  <span class="kw">if</span> (normalizedEmail) {
+    <span class="kw">const</span> emailState = <span class="kw">await</span> <span class="fn">getAttemptRecord</span>(<span class="str">`email:${normalizedEmail}`</span>, <span class="str">'email'</span>, normalizedEmail);
+    <span class="kw">const</span> nextEmailAttempts = emailState.attempts + <span class="num">1</span>;
+    <span class="kw">const</span> emailLockedUntil = nextEmailAttempts >= <span class="num">10</span> ? <span class="kw">new</span> Date(now.getTime() + <span class="num">5 * 60 * 1000</span>) : <span class="kw">null</span>;
+    <span class="kw">await</span> prisma.loginAttempt.<span class="fn">upsert</span>({ ... });
+  }
+}
+        </pre>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 15: REQ 06 - LOGOUT & ROUTE PROTECTION -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="15" data-title="[REQ_06] Đăng Xuất & Bảo Vệ Route (Slide 54)">
+      <div class="slide-meta">
+        <div><span class="tag">REQUIREMENT_06</span> :: LOGOUT_AND_ROUTE_GUARD</div>
+        <div>SLIDE DECK REF: SLIDE 54 · VERIFY: SCENARIOS 15 - 21</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/middlewares/authMiddleware.js</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> YÊU CẦU 6: ĐĂNG XUẤT SSR &amp; BẢO VỆ ROUTE NỘI BỘ</h1>
+      <p class="slide-desc">
+        Đăng xuất triệt để xóa bản ghi DB session trước khi xóa cookie; Middleware <code>requireAuth</code> bảo vệ toàn bộ tuyến nội bộ và ngăn chặn tài khoản pending.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">🚪 1. QUY TRÌNH ĐĂNG XUẤT TRIỆT ĐỂ (POST /LOGOUT)</div>
+          <ul>
+            <li><strong>Hủy bản ghi trên PostgreSQL:</strong> Gọi <code>req.session.destroy()</code> để xóa hoàn toàn bản ghi trong bảng <code>Session</code> trên server.</li>
+            <li><strong>Xóa Cookie phía client:</strong> Gọi <code>res.clearCookie('sid')</code> với cùng các thuộc tính <code>path: '/', httpOnly: true, sameSite: 'lax'</code>.</li>
+            <li><strong>Chuyển hướng:</strong> Trả về <span class="badge green">HTTP 303</span> chuyển hướng về <code>/login?logout=true</code>. Dùng lại Session ID cũ sẽ bị chặn ngay lập tức.</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">🛡️ 2. MIDDLEWARE REQUIREAUTH BẢO VỆ ROUTE</div>
+          <ul>
+            <li><strong>Bảo vệ toàn diện:</strong> Đặt trước toàn bộ route <code>/menu</code>, <code>/dishes</code>, <code>/admin/*</code>.</li>
+            <li><strong>Chưa đăng nhập:</strong> Chuyển hướng ngay <span class="badge cyan">HTTP 303</span> về <code>/login</code>.</li>
+            <li><strong>Chặn tài khoản pending:</strong> Nếu người dùng có cookie nhưng trạng thái trong DB bị chuyển về <code>pending</code> &rarr; Hủy session và chuyển hướng <span class="badge red">HTTP 303</span> về <code>/login?error=pending</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-container">
+        <div class="code-bar">
+          <span>CODE THỰC TẾ: MIDDLEWARE REQUIREAUTH BẢO VỆ ROUTE VÀ CHẶN PENDING</span>
+          <span class="file">src/middlewares/authMiddleware.js</span>
+        </div>
+        <pre class="code-body">
+<span class="kw">function</span> <span class="fn">requireAuth</span>(req, res, next) {
+  <span class="comment">// 1. Chưa đăng nhập -> Chuyển hướng 303 về /login (Slide 54, 60)</span>
+  <span class="kw">if</span> (!req.session || !req.session.user) {
+    <span class="kw">return</span> res.<span class="fn">redirect</span>(<span class="num">303</span>, <span class="str">'/login'</span>);
+  }
+
+  <span class="comment">// 2. Đã đăng nhập nhưng tài khoản đang ở trạng thái pending -> Hủy phiên và chặn (Slide 54)</span>
+  <span class="kw">if</span> (req.session.user.status === <span class="str">'pending'</span>) {
+    <span class="kw">return</span> req.session.<span class="fn">destroy</span>(() => {
+      res.<span class="fn">clearCookie</span>(<span class="str">'sid'</span>);
+      <span class="kw">return</span> res.<span class="fn">redirect</span>(<span class="num">303</span>, <span class="str">'/login?error=pending'</span>);
+    });
+  }
+
+  <span class="kw">return next</span>();
+}
+        </pre>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 16: REQ 07 - FORGOT & RESET PASSWORD -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="16" data-title="[REQ_07] Quên & Đặt Lại Mật Khẩu (Slide 55)">
+      <div class="slide-meta">
+        <div><span class="tag">REQUIREMENT_07</span> :: FORGOT_AND_RESET_PASSWORD</div>
+        <div>SLIDE DECK REF: SLIDE 55 · VERIFY: SCENARIOS 22 - 28</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat src/controllers/authController.js | grep -A 35 "exports.postResetPassword"</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> YÊU CẦU 7: QUÊN MẬT KHẨU &amp; HỦY TOÀN BỘ PHIÊN CŨ</h1>
+      <p class="slide-desc">
+        Bảo vệ chống rò rỉ token qua Header Referer, phản hồi đồng nhất chống dò email và thu hồi toàn bộ phiên đăng nhập cũ của người dùng khi đổi mật khẩu.
+      </p>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">🔒 3 NGUYÊN TẮC BẢO MẬT ĐẶT LẠI MẬT KHẨU</div>
+          <ul>
+            <li><strong>1. POST /forgot phản hồi đồng nhất:</strong> Dù email có tồn tại hay không đều trả thông báo chung: <em>"Nếu email tồn tại, liên kết khôi phục đã được gửi"</em> (chống User Enumeration). Giới hạn 5 lần/15 phút.</li>
+            <li><strong>2. GET /reset thiết lập no-referrer:</strong> Header <code>Referrer-Policy: no-referrer</code> để nếu trang reset tải tài nguyên bên ngoài thì chuỗi <code>?token=...</code> không bị rò rỉ qua header Referer.</li>
+            <li><strong>3. HỦY TOÀN BỘ PHIÊN CŨ (Slide 55):</strong> Khi đổi mật khẩu thành công, Transaction đồng thời cập nhật mật khẩu mới và <strong>xóa tất cả bản ghi của user trong bảng <code>Session</code></strong>. Mọi thiết bị khác đang đăng nhập đều bị đăng xuất ngay lập tức!</li>
+          </ul>
+        </div>
+
+        <div class="code-container" style="margin-top: 0;">
+          <div class="code-bar">
+            <span>TRÍCH ĐOẠN ĐỔI MẬT KHẨU & THU HỒI TOÀN BỘ PHIÊN ĐĂNG NHẬP</span>
+            <span class="file">authController.js:862-895</span>
+          </div>
+          <pre class="code-body">
+<span class="kw">const</span> newPasswordHash = <span class="kw">await</span> bcrypt.<span class="fn">hash</span>(password, <span class="num">10</span>);
+
+<span class="comment">// Thực thi đồng thời trong 1 Transaction duy nhất:</span>
+<span class="kw">await</span> prisma.<span class="fn">$transaction</span>([
+  <span class="comment">// 1. Cập nhật mật khẩu băm mới</span>
+  prisma.user.<span class="fn">update</span>({
+    where: { id: user.id },
+    data: { passwordHash: newPasswordHash }
+  }),
+  <span class="comment">// 2. Đánh dấu token reset đã sử dụng</span>
+  prisma.passwordReset.<span class="fn">update</span>({
+    where: { id: resetRecord.id },
+    data: { usedAt: now }
+  }),
+  <span class="comment">// 3. THU HỒI TOÀN BỘ PHIÊN ĐĂNG NHẬP CŨ TRÊN MỌI THIẾT BỊ!</span>
+  prisma.session.<span class="fn">deleteMany</span>({
+    where: { userId: user.id }
+  })
+]);
+
+<span class="comment">// KHÔNG tự động đăng nhập - Chuyển hướng 303 về /login</span>
+<span class="kw">return</span> res.<span class="fn">redirect</span>(<span class="num">303</span>, <span class="str">'/login?reset=success'</span>);
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 17: SEQUENCE FLOW 01 -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="17" data-title="[FLOW_01] Luồng Đăng Ký & Kích Hoạt OTP">
+      <div class="slide-meta">
+        <div><span class="tag">ASCII_SEQUENCE_01</span> :: REGISTRATION_AND_OTP</div>
+        <div>FLOW ARCHITECTURE: BROWSER &lt;-&gt; SSR &lt;-&gt; POSTGRES &lt;-&gt; SMTP</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">./scripts/draw-sequence-flow.sh --flow=registration</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> SƠ ĐỒ LUỒNG 1: ĐĂNG KÝ VÀ KÍCH HOẠT OTP</h1>
+
+      <pre class="ascii-diagram">
+ BROWSER                     EXPRESS (SSR)                    POSTGRESQL (DB)                 MAIL SERVER (SMTP)
+    │                              │                                 │                                │
+ 1. │── POST /register ───────────►│                                 │                                │
+    │   (Turnstile + Form Data)    │ 2. Verify Turnstile             │                                │
+    │                              │─── Kiểm tra Rate Limit IP ─────►│                                │
+    │                              │─── Băm Bcrypt (Cost 10) ────────│                                │
+    │                              │─── Lưu User pending + otpHash ─►│                                │
+    │                              │─── Gửi mã OTP 6 số ─────────────────────────────────────────────►│
+    │◄── 200 Render /activate ─────│                                 │                                │
+    │                              │                                 │                                │
+ 3. │── POST /activate ────────────►│                                 │                                │
+    │   (email + 6-digit OTP)      │ 4. Kiểm tra attempts &lt; 5        │                                │
+    │                              │─── timingSafeCompare(OTP) ──────│                                │
+    │                              │─── Transaction: ───────────────►│                                │
+    │                              │    • User.status = 'active'     │                                │
+    │                              │    • emailVerifiedAt = now      │                                │
+    │                              │    • Challenge.usedAt = now     │                                │
+ 5. │◄── 303 Redirect /login ──────│ (KHÔNG TẠO SESSION)             │                                │
+    │                              │                                 │                                │
+      </pre>
+
+      <div class="term-box accent-border" style="margin-top: 14px;">
+        <div class="term-box-header">💡 ĐIỂM KIỂM SOÁT BẢO MẬT CHÍNH TRONG LUỒNG</div>
+        <p>
+          • <strong>Không tạo session ở bước kích hoạt:</strong> Sau khi kích hoạt thành công, server trả về mã <code>303</code> chuyển hướng về <code>/login?activated=true</code>. Người dùng bắt buộc phải nhập lại email &amp; mật khẩu để sinh phiên hợp lệ.
+          <br>• <strong>Bảo vệ CPU:</strong> CAPTCHA được kiểm tra ở Bước 2, chặn ngay các bot spam trước khi hàm tính toán nặng <code>bcrypt.hash</code> được kích hoạt.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 18: SEQUENCE FLOW 02 -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="18" data-title="[FLOW_02] Luồng Đăng Nhập & Chống Brute-Force">
+      <div class="slide-meta">
+        <div><span class="tag">ASCII_SEQUENCE_02</span> :: LOGIN_AND_BRUTE_FORCE</div>
+        <div>FLOW ARCHITECTURE: TURNSTILE &lt;-&gt; RATE_LIMIT &lt;-&gt; SESSION_REGENERATE</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">./scripts/draw-sequence-flow.sh --flow=login</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> SƠ ĐỒ LUỒNG 2: ĐĂNG NHẬP &amp; PHÒNG THỦ BRUTE-FORCE</h1>
+
+      <pre class="ascii-diagram">
+ BROWSER                     EXPRESS (SSR)                    POSTGRESQL (DB)                 CLOUDFLARE
+    │                              │                                 │                             │
+ 1. │── GET /login ───────────────►│── Sinh challengeId ────────────►│ (Bảng CaptchaChallenge)     │
+    │◄── Render Form + Widget ─────│                                 │                             │
+    │                              │                                 │                             │
+ 2. │── POST /login ──────────────►│ 3. Xác minh Turnstile ────────────────────────────────────────►│
+    │   (email + pass + cf-token)  │                                 │                             │
+    │                              │── Kiểm tra Lockout ────────────►│ (Email &gt;= 10 or IP &gt;= 20?)  │
+    │                              │── Tra User theo email ─────────►│                             │
+    │                              │── bcrypt.compare(pass, hash) ───│                             │
+    │                              │                                 │                             │
+    │                              │ [TRƯỜNG HỢP SAI MẬT KHẨU]       │                             │
+    │                              │── recordFailedLogin(email, ip) ─►│ (Tăng attempts)             │
+    │◄── 400 "Sai email hoặc pass" ─│ (Tạo CAPTCHA mới, giữ email)    │                             │
+    │                              │                                 │                             │
+    │                              │ [TRƯỜNG HỢP ĐÚNG PASS]          │                             │
+    │                              │── User.status !== 'active' ────►│ ──► 403 FORBIDDEN (No Session)
+    │                              │── clearEmailLoginAttempts() ───►│ (Xóa đếm email, giữ đếm IP) │
+    │                              │── req.session.regenerate() ─────│ (Sinh sid mới)              │
+    │                              │── Lưu Session data vào DB ─────►│ (Bảng Session)              │
+ 4. │◄── 303 Redirect /menu ───────│                                 │                             │
+    │    Set-Cookie: sid=...       │                                 │                             │
+      </pre>
+
+      <div class="term-box cyan-border" style="margin-top: 14px;">
+        <div class="term-box-header cyan">💡 ĐIỂM KIỂM SOÁT BẢO MẬT CHÍNH TRONG LUỒNG</div>
+        <p>
+          • <strong>Chống dò tài khoản:</strong> Sai mật khẩu hoặc email không tồn tại đều trả cùng mã lỗi 400 và cùng 1 thông báo chung.
+          <br>• <strong>Khóa tự động:</strong> Nếu đăng nhập sai 10 lần theo email hoặc 20 lần theo IP trong vòng 15 phút, hệ thống tự động khóa 5 phút và trả về mã <code>HTTP 429 Too Many Requests</code>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 19: SEQUENCE FLOW 03 -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="19" data-title="[FLOW_03] Luồng Quên Mật Khẩu & Hủy Đa Phiên">
+      <div class="slide-meta">
+        <div><span class="tag">ASCII_SEQUENCE_03</span> :: RESET_PASSWORD_AND_REVOCATION</div>
+        <div>FLOW ARCHITECTURE: REFERRER_POLICY &lt;-&gt; ATOMIC_RESET &lt;-&gt; SESSION_PURGE</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">./scripts/draw-sequence-flow.sh --flow=reset-password</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> SƠ ĐỒ LUỒNG 3: QUÊN MẬT KHẨU &amp; HỦY ĐA PHIÊN</h1>
+
+      <pre class="ascii-diagram">
+ BROWSER                     EXPRESS (SSR)                    POSTGRESQL (DB)                 MAIL SERVER (SMTP)
+    │                              │                                 │                                │
+ 1. │── POST /forgot (email) ─────►│── Rate limit (5 req/15m) ──────►│                                │
+    │                              │── Sinh token 32 bytes hex ──────│                                │
+    │                              │── Lưu tokenHash (SHA-256) ─────►│ (Bảng PasswordReset)           │
+    │                              │── Gửi link /reset?token=... ─────────────────────────────────────►│
+    │◄── 200 Thông báo chung ──────│ (Chống User Enumeration)        │                                │
+    │                              │                                 │                                │
+ 2. │── GET /reset?token=... ─────►│ 3. Header: Referrer-Policy: no-referrer (Chống rò rỉ token)     │
+    │◄── Render form đổi pass ─────│ (KHÔNG TIÊU THỤ TOKEN Ở BƯỚC GET!)                               │
+    │                              │                                 │                                │
+ 4. │── POST /reset ──────────────►│ 5. Validate mật khẩu mới        │                                │
+    │   (token + newPassword)      │── timingSafeCompare(token) ────►│                                │
+    │                              │── Transaction nguyên tử: ──────►│                                │
+    │                              │   • Update User.passwordHash    │                                │
+    │                              │   • PasswordReset.usedAt = now  │                                │
+    │                              │   • DELETE FROM Session WHERE userId = user.id (HỦY MỌI PHIÊN)   │
+ 6. │◄── 303 Redirect /login ──────│ (Đăng xuất mọi thiết bị cũ)     │                                │
+      </pre>
+
+      <div class="term-box purple-border" style="margin-top: 14px;">
+        <div class="term-box-header purple">💡 ĐIỂM KIỂM SOÁT BẢO MẬT CHÍNH TRONG LUỒNG</div>
+        <p>
+          • <strong>Referrer-Policy: no-referrer:</strong> Đảm bảo chuỗi <code>?token=...</code> nhạy cảm không bị gửi sang bên thứ 3 nếu trang web có nhúng ảnh, font hay script ngoại vi.
+          <br>• <strong>Thu hồi phiên tức thì:</strong> Lệnh <code>deleteMany({ where: { userId } })</code> đảm bảo nếu tài khoản bị hack và chủ tài khoản đổi mật khẩu thì phiên của hacker trên thiết bị khác bị hủy ngay tức khắc.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 20: 28 ACCEPTANCE SCENARIOS -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="20" data-title="[AUDIT] 28 Kịch Bản Nghiệm Thu (Slides 58-61)">
+      <div class="slide-meta">
+        <div><span class="tag">VERIFICATION_SUITE</span> :: 28_ACCEPTANCE_TEST_CASES</div>
+        <div>SLIDE DECK REF: SLIDES 58 - 61 · PASS_RATE: 100%</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">npm run test:acceptance -- --all</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> TỔNG HỢP 28 KỊCH BẢN NGHIỆM THU (SLIDES 58–61)</h1>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">📋 BẢNG 1: ĐĂNG KÝ & KÍCH HOẠT (7 SCENARIOS - SLIDE 58)</div>
+          <table class="term-table">
+            <thead><tr><th>#</th><th>Hành động / Input</th><th>Kỳ vọng</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Form hợp lệ + CAPTCHA</td><td>User pending, OTP gửi qua mail</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>2</td><td>Email đã tồn tại</td><td>Phản hồi giống hệt email mới (200)</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>3</td><td>Thiếu/Sai CAPTCHA</td><td>Lỗi 400, không băm mật khẩu</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>4</td><td>Nhập đúng mã OTP</td><td>Active, verified, 303 về /login</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>5</td><td>Nhập sai OTP &lt; 5 lần</td><td>Lỗi 400, tăng attempts</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>6</td><td>Nhập sai OTP &gt;= 5 lần</td><td>Khóa tài khoản, trả HTTP 429</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>7</td><td>Gửi lại OTP &lt; 60 giây</td><td>Chặn, trả HTTP 429 cooldown</td><td><span class="badge green">PASS</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">📋 BẢNG 2: ĐĂNG NHẬP & BRUTE-FORCE (7 SCENARIOS - SLIDE 59)</div>
+          <table class="term-table">
+            <thead><tr><th>#</th><th>Hành động / Input</th><th>Kỳ vọng</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr><td>8</td><td>Đăng nhập hợp lệ</td><td>303 tới /menu, sid mới toanh</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>9</td><td>Email không tồn tại</td><td>400, thông báo lỗi chung</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>10</td><td>Sai password</td><td>400, thông báo lỗi chung</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>11</td><td>Tài khoản pending</td><td>403 Forbidden, không tạo session</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>12</td><td>Sai pass &gt;= 3 lần</td><td>Bắt buộc giải Turnstile CAPTCHA</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>13</td><td>Sai pass &gt;= 10 lần (Email)</td><td>Khóa 5 phút, trả HTTP 429</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>14</td><td>Sai pass &gt;= 20 lần (IP)</td><td>Khóa IP 5 phút, trả HTTP 429</td><td><span class="badge green">PASS</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 14px;">
+        <div class="term-box purple-border">
+          <div class="term-box-header purple">📋 BẢNG 3: SESSION & ROUTE PROTECTION (7 SCENARIOS - SLIDE 60)</div>
+          <table class="term-table">
+            <thead><tr><th>#</th><th>Hành động / Input</th><th>Kỳ vọng</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr><td>15</td><td>Cookie sid an toàn</td><td>HttpOnly, SameSite=Lax</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>16</td><td>Chưa đăng nhập vào /menu</td><td>303 chuyển hướng tới /login</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>17</td><td>POST /logout</td><td>Xóa session DB, xóa cookie sid</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>18</td><td>Dùng lại sid cũ sau logout</td><td>Bị chặn, 303 tới /login</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>19</td><td>Khởi động lại server</td><td>Session trên Postgres vẫn hoạt động</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>20</td><td>POST không có _csrf</td><td>403 Forbidden CSRF Error</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>21</td><td>Session Fixation test</td><td>sid đổi mới hoàn toàn sau login</td><td><span class="badge green">PASS</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">📋 BẢNG 4: QUÊN & ĐẶT LẠI MẬT KHẨU (7 SCENARIOS - SLIDE 61)</div>
+          <table class="term-table">
+            <thead><tr><th>#</th><th>Hành động / Input</th><th>Kỳ vọng</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr><td>22</td><td>POST /forgot hợp lệ</td><td>Gửi link reset kèm token</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>23</td><td>POST /forgot email lạ</td><td>Phản hồi giống hệt (200 OK)</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>24</td><td>Rate limit /forgot</td><td>Quá 5 req/15m trả HTTP 429</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>25</td><td>GET /reset có token</td><td>Referrer-Policy: no-referrer</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>26</td><td>POST /reset đổi pass</td><td>Cập nhật pass mới, 303 /login</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>27</td><td>Dùng lại token đã reset</td><td>Từ chối, báo lỗi token hết hạn</td><td><span class="badge green">PASS</span></td></tr>
+              <tr><td>28</td><td>Hủy phiên đa thiết bị</td><td>Xóa toàn bộ Session của user</td><td><span class="badge green">PASS</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 21: VIVA Q&A (SLIDE 62) -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="21" data-title="[VIVA] 6 Câu Hỏi Vấn Đáp (Slide 62)">
+      <div class="slide-meta">
+        <div><span class="tag">DEFENSE_PREPARATION</span> :: 6_VIVA_CORE_QUESTIONS</div>
+        <div>SLIDE DECK REF: SLIDE 62 · EXAMINER_CHECKLIST</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat docs/viva-defense-qa.md</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> 6 CÂU HỎI VẤN ĐÁP BẢO VỆ ĐỒ ÁN (SLIDE 62)</h1>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">Q1: TẠI SAO KHÔNG THỂ DÙNG SHA-256 ĐỂ BĂM MẬT KHẨU?</div>
+          <p>
+            <strong>Trả lời:</strong> SHA-256 là hàm băm nhanh (hàng tỷ hash/giây trên GPU). Hacker có thể dùng card đồ họa chạy vét cạn (brute-force) từ điển chỉ trong vài phút. Mật khẩu bắt buộc phải dùng <strong>Bcrypt</strong> (hàm băm chậm có Salt và Cost Factor) để triệt tiêu năng lực tính toán phần cứng của kẻ tấn công.
+          </p>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">Q2: TOKEN RESET MẬT KHẨU CÓ CẦN BĂM BCRYPT KHÔNG?</div>
+          <p>
+            <strong>Trả lời:</strong> <strong>Không cần Bcrypt, chỉ cần SHA-256.</strong> Vì token reset là chuỗi ngẫu nhiên mật mã học 32 bytes (256-bit entropy cao), không gian mẫu $2^{256}$ là bất khả thi để đoán mò, đồng thời token có thời hạn ngắn (15 phút) và dùng 1 lần duy nhất.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 14px;">
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">Q3: TẠI SAO KHÔNG NÊN LƯU JWT TRONG LOCALSTORAGE?</div>
+          <p>
+            <strong>Trả lời:</strong> <code>localStorage</code> có thể bị truy cập bởi bất kỳ đoạn mã JavaScript nào chạy trên trang. Nếu ứng dụng dính lỗ hổng XSS (qua thư viện bên thứ 3 hoặc input chưa escape), hacker có thể đánh cắp token ngay. SSR dùng <strong>Cookie HttpOnly</strong> giúp trình duyệt tự bảo vệ token khỏi JavaScript.
+          </p>
+        </div>
+
+        <div class="term-box purple-border">
+          <div class="term-box-header purple">Q4: SESSION FIXATION DIỄN RA KHI NÀO VÀ KHẮC PHỤC RA SAO?</div>
+          <p>
+            <strong>Trả lời:</strong> Xảy ra khi Session ID trước và sau khi đăng nhập giữ nguyên không đổi. Hacker gán Session ID của mình cho nạn nhân và đợi nạn nhân đăng nhập để chiếm quyền. Cách khắc phục: Luôn gọi <code>req.session.regenerate()</code> ngay khi đăng nhập để cấp Session ID mới toanh.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 14px;">
+        <div class="term-box red-border">
+          <div class="term-box-header red">Q5: VÌ SAO CẦN REFERRER-POLICY: NO-REFERRER Ở TRANG RESET?</div>
+          <p>
+            <strong>Trả lời:</strong> URL trang reset chứa token nhạy cảm (<code>/reset?token=abc...</code>). Nếu trang web tải hình ảnh, font hoặc link ngoài, trình duyệt sẽ tự động gửi kèm URL đầy đủ trong Header Referer, làm rò rỉ token reset cho bên thứ 3. Cờ <code>no-referrer</code> triệt tiêu nguy cơ này.
+          </p>
+        </div>
+
+        <div class="term-box accent-border">
+          <div class="term-box-header">Q6: PHÂN BIỆT SAMESITE=LAX VÀ SAMESITE=STRICT?</div>
+          <p>
+            <strong>Trả lời:</strong> <code>Strict</code> không bao giờ gửi cookie theo request từ trang khác (kể cả nhấp link thông thường). <code>Lax</code> cho phép gửi cookie với các điều hướng top-level an toàn (như bấm link GET), nhưng chặn tuyệt đối trong các request POST/PUT/DELETE từ trang ngoài, giúp cân bằng hoàn hảo giữa bảo mật CSRF và trải nghiệm người dùng.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 22: CODE AUDIT & AI AGENT CASE STUDY -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="22" data-title="[AUDIT] Checklist & Bắt Lỗi AI Agent (Slide 57, 63)">
+      <div class="slide-meta">
+        <div><span class="tag">CODE_AUDIT_REPORT</span> :: SOURCE_CHECKLIST_AND_AGENT_DEFECTS</div>
+        <div>SLIDE DECK REF: SLIDES 57, 63 · CASE_STUDY</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">cat docs/source-code-audit-and-agent-report.md</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> CHECKLIST MÃ NGUỒN &amp; CASE STUDY BẮT LỖI AI AGENT</h1>
+
+      <div class="grid-2">
+        <div class="term-box accent-border">
+          <div class="term-box-header">🔍 CHECKLIST KIỂM TRA MÃ NGUỒN (SLIDE 57)</div>
+          <ul>
+            <li>✅ <strong>Bcrypt Cost 10:</strong> Kiểm tra toàn bộ codebase không có MD5/SHA băm mật khẩu người dùng.</li>
+            <li>✅ <strong>Session Regenerate:</strong> <code>req.session.regenerate()</code> được gọi tại dòng 584 <code>authController.js</code>.</li>
+            <li>✅ <strong>Không log Password:</strong> Không có bất kỳ lệnh <code>console.log(password)</code> nào.</li>
+            <li>✅ <strong>Transaction nguyên tử:</strong> Dùng <code>prisma.$transaction</code> cho cả kích hoạt OTP và đặt lại mật khẩu.</li>
+            <li>✅ <strong>Cookie an toàn:</strong> Cấu hình <code>httpOnly: true, sameSite: 'lax'</code> trong <code>app.js</code>.</li>
+            <li>✅ <strong>CSRF Protection:</strong> Toàn bộ route POST đều được bảo vệ bởi <code>verifyCsrfToken</code>.</li>
+          </ul>
+        </div>
+
+        <div class="term-box red-border">
+          <div class="term-box-header red">🤖 CASE STUDY BẮT LỖI AI AGENT (SLIDE 63)</div>
+          <p><strong>Lỗi tiềm ẩn do AI tự sinh:</strong></p>
+          <p style="font-size: 0.82rem; margin-top: 6px; color: var(--text);">
+            Khi yêu cầu AI sinh luồng kích hoạt tài khoản OTP (<code>POST /activate</code>), AI thường tự ý viết thêm đoạn mã đăng nhập tự động (Auto-login):
+            <br><code>req.session.user = user; res.redirect('/menu');</code>
+          </p>
+          <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--red); padding: 8px 12px; margin: 10px 0; font-size: 0.8rem;">
+            <strong>Hậu quả bảo mật:</strong> Vi phạm nghiêm trọng Slide 51. Tài khoản được cấp quyền truy cập ngay lập tức mà chưa trải qua bước xác thực mật khẩu chính thức và chưa sinh <code>sid</code> mới qua <code>regenerate()</code>.
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted);">
+            <strong>Biện pháp khắc phục của nhóm:</strong> Đã rà soát và loại bỏ hoàn toàn lệnh auto-login; thay thế bằng chuyển hướng <span class="badge green">HTTP 303 /login?activated=true</span>, bắt buộc người dùng đăng nhập tường minh.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE 23: CONCLUSION & QUICK NAV -->
+    <!-- ===================================================================== -->
+    <section class="slide" data-slide="23" data-title="[DONE] Tổng Kết & Hoàn Tất">
+      <div class="slide-meta">
+        <div><span class="tag">PRESENTATION_COMPLETE</span> :: READY_FOR_VIVA_DEFENSE</div>
+        <div>RESTAURANTLY SSR AUTH · GROUP 02 · 100% SPEC COMPLIANT</div>
+      </div>
+
+      <div class="slide-prompt">
+        <span class="path">~/block8-auth-ssr</span> $ <span class="cmd">./scripts/summary-status.sh</span>
+      </div>
+
+      <h1 class="slide-title"><span class="prefix">❯</span> TỔNG KẾT ĐỒ ÁN VÀ TRẠNG THÁI HỆ THỐNG</h1>
+      <p class="slide-desc">
+        Dự án <strong>moodle-mcp-srv / Restaurantly SSR-Auth</strong> đã hoàn thành 100% các tiêu chí bảo mật theo chuẩn bài giảng Block 8. Sẵn sàng cho buổi bảo vệ đồ án và demo trực tiếp!
+      </p>
+
+      <div class="grid-3">
+        <div class="term-box accent-border">
+          <div class="term-box-header">📊 ĐỘ PHỦ YÊU CẦU</div>
+          <ul>
+            <li><strong>7/7 Nhóm yêu cầu:</strong> Hoàn thành tuyệt đối (Slide 48–55)</li>
+            <li><strong>28/28 Kịch bản nghiệm thu:</strong> Pass 100% (Slide 58–61)</li>
+            <li><strong>6/6 Câu hỏi vấn đáp:</strong> Sẵn sàng tài liệu trả lời sắc bén</li>
+          </ul>
+        </div>
+
+        <div class="term-box cyan-border">
+          <div class="term-box-header cyan">🛡️ BẢO MẬT ĐA TẦNG</div>
+          <ul>
+            <li>Cloudflare Turnstile CAPTCHA chặn Bot</li>
+            <li>Postgres DB-backed Rate Limiter (HTTP 429)</li>
+            <li>Stateful Session PostgreSQL + Cookie HttpOnly</li>
+            <li>Chống Session Fixation &amp; CSRF Synchronizer</li>
+          </ul>
+        </div>
+
+        <div class="term-box amber-border">
+          <div class="term-box-header amber">🚀 TRẢI NGHIỆM TRỰC TIẾP</div>
+          <ul>
+            <li>File slide: <code>presentation.html</code></li>
+            <li>Server route: <code>http://localhost:3000/presentation</code></li>
+            <li>Form đăng nhập &amp; đăng ký đã tối ưu giao diện sạch</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="term-box" style="margin-top: 20px; text-align: center; border-color: var(--accent);">
+        <p style="color: var(--accent); font-weight: 700; font-size: 1.1rem; margin-bottom: 6px;">
+          🎉 CẢM ƠN THẦY CÔ VÀ CÁC BẠN ĐÃ THEO DÕI BÁO CÁO CỦA NHÓM 02!
+        </p>
+        <p style="color: var(--text-dim); font-size: 0.85rem;">
+          Nhấn phím <kbd>O</kbd> để mở lưới toàn bộ slide hoặc sử dụng ô lệnh terminal bên dưới để điều hướng.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Terminal Command / Prompt Bar -->
+  <footer class="term-prompt-bar">
+    <div class="prompt-prefix">
+      <span>group02@ssr:~$</span>
+    </div>
+
+    <div class="prompt-input-wrapper">
+      <input type="text" id="termCmdInput" class="prompt-input" placeholder="Gõ lệnh: 'next', 'prev', 'goto 10', 'grid', 'theme amber', 'sfx' hoặc số trang rồi nhấn Enter..." autocomplete="off">
+      <span class="cursor"></span>
+    </div>
+
+    <div class="deck-nav-buttons">
+      <button class="btn-term" onclick="prevSlide()" title="Slide trước (Phím ← hoặc Backspace)">
+        ◀ PREV
+      </button>
+      <div class="slide-counter" id="slideCounterDisplay">
+        [01 / 23]
+      </div>
+      <button class="btn-term" onclick="nextSlide()" title="Slide sau (Phím → hoặc Space)">
+        NEXT ▶
+      </button>
+    </div>
+  </footer>
+
+  <!-- Grid View Overview Modal -->
+  <div class="modal-backdrop" id="gridModal" onclick="handleModalClick(event)">
+    <div class="modal-header">
+      <div class="modal-title">
+        📑 DANH SÁCH TOÀN BỘ SLIDE (NHẤP ĐỂ CHUYỂN NHANH)
+      </div>
+      <button class="btn-term" onclick="closeOverview()">✕ ĐÓNG [ESC]</button>
+    </div>
+    <div class="grid-overview" id="gridCardsContainer"></div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // SLIDE DECK ENGINE & TERMINAL CONTROLLER
+    // =========================================================================
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const totalSlides = slides.length;
+    let currentSlide = 1;
+    let sfxEnabled = false;
+    let audioCtx = null;
+
+    // Web Audio Synthesizer for Retro Terminal Clicks & Beeps
+    function playTerminalSound(type = 'click') {
+      if (!sfxEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.exponentialRampToValueAtTime(200, now + 0.04);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } else if (type === 'beep') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(520, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        }
+      } catch (e) {
+        // AudioContext might be blocked before first user gesture
+      }
+    }
+
+    function toggleSound() {
+      sfxEnabled = !sfxEnabled;
+      const btn = document.getElementById('btnSound');
+      if (sfxEnabled) {
+        btn.textContent = '🔊 SFX: ON';
+        btn.classList.add('active');
+        playTerminalSound('beep');
+      } else {
+        btn.textContent = '🔊 SFX: OFF';
+        btn.classList.remove('active');
+      }
+    }
+
+    function showSlide(index, playSfx = true) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      slides.forEach((slide, idx) => {
+        if (idx + 1 === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      // Update progress bar
+      const pct = Math.round((currentSlide / totalSlides) * 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+
+      // Update counter
+      const paddedCurrent = String(currentSlide).padStart(2, '0');
+      const paddedTotal = String(totalSlides).padStart(2, '0');
+      document.getElementById('slideCounterDisplay').textContent = `[${paddedCurrent} / ${paddedTotal}]`;
+
+      // Update URL hash without jumping page
+      history.replaceState(null, null, `#slide-${currentSlide}`);
+
+      // Scroll to top of slide
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (playSfx) playTerminalSound('click');
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      } else {
+        playTerminalSound('beep');
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      } else {
+        playTerminalSound('beep');
+      }
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      // If typing inside the terminal prompt input, ignore navigation shortcuts
+      if (document.activeElement === document.getElementById('termCmdInput')) {
+        if (e.key === 'Escape') {
+          document.getElementById('termCmdInput').blur();
+        }
+        return;
+      }
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'Backspace' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        showSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        showSlide(totalSlides);
+      } else if (e.key === 'o' || e.key === 'O' || e.key === 'Escape') {
+        e.preventDefault();
+        toggleOverview();
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      } else if (e.key === 't' || e.key === 'T') {
+        e.preventDefault();
+        toggleTheme();
+      }
+    });
+
+    // Overview Grid Modal
+    function openOverview() {
+      const container = document.getElementById('gridCardsContainer');
+      container.innerHTML = '';
+
+      slides.forEach((slide, idx) => {
+        const slideNum = idx + 1;
+        const title = slide.dataset.title || `Slide ${slideNum}`;
+        const card = document.createElement('div');
+        card.className = 'grid-slide-card' + (slideNum === currentSlide ? ' current' : '');
+        card.innerHTML = `
+          <div class="num">SLIDE [${String(slideNum).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}]</div>
+          <div class="title">${title}</div>
+          <div class="desc">${slide.querySelector('h1')?.textContent || ''}</div>
+        `;
+        card.onclick = () => {
+          showSlide(slideNum);
+          closeOverview();
+        };
+        container.appendChild(card);
+      });
+
+      document.getElementById('gridModal').classList.add('active');
+    }
+
+    function closeOverview() {
+      document.getElementById('gridModal').classList.remove('active');
+    }
+
+    function toggleOverview() {
+      const modal = document.getElementById('gridModal');
+      if (modal.classList.contains('active')) {
+        closeOverview();
+      } else {
+        openOverview();
+      }
+    }
+
+    function handleModalClick(e) {
+      if (e.target.id === 'gridModal') closeOverview();
+    }
+
+    // Theme Switcher: Matrix -> Amber -> Cyan -> Dracula
+    const themes = ['matrix', 'amber', 'cyan', 'dracula'];
+    let currentThemeIdx = 0;
+
+    function applyTheme(themeName) {
+      document.body.removeAttribute('data-theme');
+      if (themeName !== 'matrix') {
+        document.body.setAttribute('data-theme', themeName);
+      }
+      currentThemeIdx = themes.indexOf(themeName);
+      if (currentThemeIdx === -1) currentThemeIdx = 0;
+
+      const label = document.getElementById('themeLabel');
+      label.textContent = `THEME: ${themes[currentThemeIdx].toUpperCase()}`;
+    }
+
+    function toggleTheme() {
+      currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+      applyTheme(themes[currentThemeIdx]);
+      playTerminalSound('click');
+    }
+
+    // Scanlines Toggle
+    function toggleScanlines() {
+      document.body.classList.toggle('scanlines');
+      const btn = document.getElementById('btnScanlines');
+      const hasScanlines = document.body.classList.contains('scanlines');
+      btn.textContent = hasScanlines ? '📺 CRT: ON' : '📺 CRT: OFF';
+      playTerminalSound('click');
+    }
+
+    // Fullscreen Toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+      playTerminalSound('click');
+    }
+
+    // Terminal Command Line Prompt Parser
+    const cmdInput = document.getElementById('termCmdInput');
+    cmdInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const raw = cmdInput.value.trim().toLowerCase();
+        cmdInput.value = '';
+
+        if (!raw) return;
+
+        // Command parsing
+        if (raw === 'next' || raw === 'n' || raw === ':n') {
+          nextSlide();
+        } else if (raw === 'prev' || raw === 'p' || raw === ':p' || raw === 'back') {
+          prevSlide();
+        } else if (raw === 'first' || raw === 'home' || raw === ':first') {
+          showSlide(1);
+        } else if (raw === 'last' || raw === 'end' || raw === ':last') {
+          showSlide(totalSlides);
+        } else if (raw.startsWith('goto ') || raw.startsWith('slide ') || raw.startsWith(':')) {
+          const num = parseInt(raw.replace(/^(goto|slide|:)\s*/, ''));
+          if (!isNaN(num)) showSlide(num);
+        } else if (!isNaN(parseInt(raw))) {
+          showSlide(parseInt(raw));
+        } else if (raw === 'grid' || raw === 'overview' || raw === 'ls' || raw === 'list') {
+          openOverview();
+        } else if (raw === 'theme matrix') {
+          applyTheme('matrix');
+        } else if (raw === 'theme amber') {
+          applyTheme('amber');
+        } else if (raw === 'theme cyan') {
+          applyTheme('cyan');
+        } else if (raw === 'theme dracula') {
+          applyTheme('dracula');
+        } else if (raw === 'theme') {
+          toggleTheme();
+        } else if (raw === 'crt' || raw === 'scanlines') {
+          toggleScanlines();
+        } else if (raw === 'sfx' || raw === 'sound') {
+          toggleSound();
+        } else if (raw === 'fullscreen' || raw === 'f') {
+          toggleFullscreen();
+        } else if (raw === 'help' || raw === '?') {
+          alert('CÁC LỆNH TERMINAL HỖ TRỢ:\n\n• next / prev : Chuyển slide\n• goto <số> hoặc <số> : Nhảy đến slide\n• grid / ls : Mở lưới slide\n• theme matrix|amber|cyan|dracula : Đổi giao diện\n• crt : Bật/tắt quét màn hình CRT\n• sfx : Bật/tắt âm thanh bàn phím\n• fullscreen : Toàn màn hình');
+        } else {
+          playTerminalSound('beep');
+        }
+      }
+    });
+
+    // Init from URL hash or default to 1
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#slide-')) {
+      const target = parseInt(hash.replace('#slide-', ''));
+      if (!isNaN(target)) showSlide(target, false);
+    } else {
+      showSlide(1, false);
+    }
+  </script>
+</body>
+</html>

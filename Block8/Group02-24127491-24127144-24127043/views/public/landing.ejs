@@ -1,0 +1,215 @@
+<%- include('../partials/header') %>
+
+<!-- 1. HERO SECTION - LANDING PAGE -->
+<section class="hero-section relative bg-[#0c0b09] py-24 lg:py-32 border-b border-[#28251f]">
+  <div class="container mx-auto px-4">
+    <div class="max-w-3xl">
+      <span class="inline-block text-xs uppercase tracking-[3px] text-[#cda45e] font-semibold mb-3 border border-[#cda45e]/30 bg-[#cda45e]/10 px-4 py-1.5 rounded-full">
+        ✦ Tinh Hoa Ẩm Thực Thượng Hạng Từ 2008
+      </span>
+      <h1 class="hero-title text-4xl sm:text-5xl lg:text-6xl font-serif text-white leading-tight mb-6">
+        Chào Mừng Đến Với <span class="text-[#cda45e]">Restaurantly</span>
+      </h1>
+      <p class="hero-subtitle text-base sm:text-lg lg:text-xl text-[#bab8b2] mb-10 font-light leading-relaxed">
+        Nơi giao thoa giữa nghệ thuật ẩm thực truyền thống và phong vị hoàng gia hiện đại. Đăng nhập hoặc đăng ký tài khoản hội viên để khám phá Trang Chủ, Thực Đơn trực tuyến và những đặc quyền riêng biệt.
+      </p>
+      <div class="hero-buttons flex flex-wrap items-center gap-4">
+        <a href="/login" class="btn btn-gold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full font-bold shadow-lg">
+          Đăng Nhập Ngay
+        </a>
+        <a href="/register" class="btn btn-outline-gold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full font-semibold">
+          Đăng Ký Thành Viên
+        </a>
+        <a href="#about" class="text-xs uppercase tracking-widest text-[#bab8b2] hover:text-[#cda45e] transition px-4 py-3 font-medium">
+          Tìm Hiểu Thêm &darr;
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. GIỚI THIỆU NHÀ HÀNG (#about) -->
+<section id="about" class="py-20 bg-[#0c0b09] border-b border-[#28251f]">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Cột nội dung giới thiệu -->
+      <div class="lg:col-span-7 space-y-6">
+        <div>
+          <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">CÂU CHUYỆN CỦA CHÚNG TÔI</span>
+          <h2 class="section-title text-3xl sm:text-4xl font-serif text-white mt-1">
+            Hơn 18 Năm Kiến Tạo Trải Nghiệm Ẩm Thực Đẳng Cấp 5 Sao
+          </h2>
+        </div>
+
+        <p class="text-sm sm:text-base text-[#bab8b2] italic font-serif leading-relaxed">
+          "Tại Restaurantly, mỗi món ăn không chỉ là hương vị mà còn là một tác phẩm nghệ thuật được chăm chút tỉ mỉ từ khâu tuyển chọn nguyên liệu đến bàn tiệc của thực khách."
+        </p>
+
+        <ul class="space-y-3 text-sm text-[#bab8b2]">
+          <li class="flex items-start gap-3">
+            <span class="text-[#cda45e] font-bold">✓</span>
+            <span>Nguyên liệu thượng hạng nhập khẩu trực tiếp: Bò Wagyu A5, Nấm Truffle Đen Pháp, Tôm Hùm Nha Trang tươi sống và Gạo ST25 tuyển chọn.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-[#cda45e] font-bold">✓</span>
+            <span>Đội ngũ Bếp Trưởng (Master Chefs) giàu kinh nghiệm trong lĩnh vực ẩm thực Á - Âu và trình bày bàn tiệc hoàng gia.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-[#cda45e] font-bold">✓</span>
+            <span>Không gian kiến trúc sang trọng, riêng tư và ấm cúng với tông màu Đen & Vàng Kim đặc trưng.</span>
+          </li>
+        </ul>
+
+        <!-- Thống kê nổi bật -->
+        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-[#28251f]">
+          <div>
+            <span class="block text-2xl sm:text-3xl font-serif text-[#cda45e] font-bold">18+</span>
+            <span class="text-xs text-[#8c8983]">Năm Kinh Nghiệm</span>
+          </div>
+          <div>
+            <span class="block text-2xl sm:text-3xl font-serif text-[#cda45e] font-bold">50+</span>
+            <span class="text-xs text-[#8c8983]">Món Ăn Tinh Tuyển</span>
+          </div>
+          <div>
+            <span class="block text-2xl sm:text-3xl font-serif text-[#cda45e] font-bold">10k+</span>
+            <span class="text-xs text-[#8c8983]">Thực Khách Hài Lòng</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cột hình ảnh nhà hàng -->
+      <div class="lg:col-span-5">
+        <div class="relative p-3 bg-[#1a1814] border border-[#cda45e]/30 rounded-xl shadow-2xl">
+          <img 
+            src="https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=900&q=80" 
+            alt="Không gian nhà hàng Restaurantly" 
+            class="w-full h-[360px] object-cover rounded-lg"
+          >
+          <div class="mt-3 flex items-center justify-between text-xs text-[#8c8983] px-1">
+            <span>Không gian phòng tiệc VIP tại Restaurantly</span>
+            <span class="text-[#cda45e] font-semibold">★ ★ ★ ★ ★</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 3. GIÁ TRỊ TINH HOA (#specials) -->
+<section id="specials" class="py-20 bg-[#0c0b09] border-b border-[#28251f]">
+  <div class="container mx-auto px-4">
+    <div class="section-header mb-12">
+      <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">GIÁ TRỊ CỐT LÕI</span>
+      <h2 class="section-title text-3xl font-serif text-white">Tại Sao Thực Khách Lựa Chọn Restaurantly</h2>
+    </div>
+
+    <div class="why-us-grid grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300 rounded-lg">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">01</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Nguyên Liệu Tuyển Chọn</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          100% nguyên liệu tươi sạch, nhập khẩu cao cấp và được kiểm định nghiêm ngặt từ các nông trại đạt chuẩn hữu cơ quốc tế.
+        </p>
+      </div>
+
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300 rounded-lg">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">02</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Đầu Bếp Đẳng Cấp</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          Đội ngũ Master Chef giàu kinh nghiệm, mang đến hương vị chuẩn ẩm thực hoàng gia và nghệ thuật bài trí tinh xảo.
+        </p>
+      </div>
+
+      <div class="why-card bg-[#1a1814] border border-[#28251f] p-8 hover:bg-[#cda45e] group transition duration-300 rounded-lg">
+        <span class="why-num font-serif text-3xl font-bold text-[#cda45e] group-hover:text-black block mb-4">03</span>
+        <h3 class="text-xl font-serif text-white group-hover:text-black mb-3">Bảo Mật & Đặc Quyền Hội Viên</h3>
+        <p class="text-sm text-[#bab8b2] group-hover:text-black/90 leading-relaxed">
+          Hệ thống tài khoản thành viên xác thực Email an toàn, giúp quý khách tra cứu thực đơn và tận hưởng dịch vụ cá nhân hóa.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. MÓN ĂN ĐẶC TRƯNG & LỜI MỜI ĐĂNG NHẬP (#highlights) -->
+<section id="highlights" class="py-20 bg-[#0c0b09]">
+  <div class="container mx-auto px-4">
+    <div class="section-header text-center max-w-2xl mx-auto mb-12">
+      <span class="section-subtitle text-xs uppercase tracking-widest text-[#cda45e] font-semibold">TUYỆT TÁC ẨM THỰC</span>
+      <h2 class="section-title text-3xl font-serif text-white">Những Món Ăn Biểu Tượng Tại Nhà Hàng</h2>
+      <p class="text-xs text-[#8c8983] mt-2">
+        Đăng nhập vào hệ thống để truy cập Trang Chủ và khám phá toàn bộ danh sách Thực Đơn chi tiết.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
+      <!-- Món 1 -->
+      <div class="bg-[#1a1814] border border-[#28251f] rounded-xl overflow-hidden hover:border-[#cda45e]/50 transition">
+        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80" alt="Bò Wagyu Nướng" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-2">
+            <span class="badge badge-gold">Món Chính</span>
+            <span class="text-[#cda45e] font-bold text-sm">450.000 VNĐ</span>
+          </div>
+          <h3 class="text-lg font-serif text-white mb-2">Bò Wagyu Nướng Sốt Nấm Truffle</h3>
+          <p class="text-xs text-[#8c8983] leading-relaxed">
+            Bò Wagyu vân mỡ tuyệt hảo kết hợp sốt kem nấm Truffle đen quý hiếm ăn kèm măng tây nướng.
+          </p>
+        </div>
+      </div>
+
+      <!-- Món 2 -->
+      <div class="bg-[#1a1814] border border-[#28251f] rounded-xl overflow-hidden hover:border-[#cda45e]/50 transition">
+        <img src="https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&w=600&q=80" alt="Tôm Hùm Nướng Bơ Tỏi" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-2">
+            <span class="badge badge-gold">Hải Sản</span>
+            <span class="text-[#cda45e] font-bold text-sm">380.000 VNĐ</span>
+          </div>
+          <h3 class="text-lg font-serif text-white mb-2">Tôm Hùm Nướng Bơ Tỏi Pháp</h3>
+          <p class="text-xs text-[#8c8983] leading-relaxed">
+            Tôm hùm tươi sống Nha Trang nướng bơ tỏi Pháp thơm ngậy, giữ trọn vị ngọt tự nhiên của biển cả.
+          </p>
+        </div>
+      </div>
+
+      <!-- Món 3 -->
+      <div class="bg-[#1a1814] border border-[#28251f] rounded-xl overflow-hidden hover:border-[#cda45e]/50 transition">
+        <img src="https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=600&q=80" alt="Phở Bò Tái Lăn" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-2">
+            <span class="badge badge-gold">Món Nước</span>
+            <span class="text-[#cda45e] font-bold text-sm">85.000 VNĐ</span>
+          </div>
+          <h3 class="text-lg font-serif text-white mb-2">Phở Bò Tái Lăn Hà Nội</h3>
+          <p class="text-xs text-[#8c8983] leading-relaxed">
+            Bánh phở tươi mềm, thịt bò xào lăn tỏi gừng thơm lừng cùng nước dùng xương hầm suốt 12 tiếng.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Box kêu gọi Đăng nhập / Đăng ký -->
+    <div class="bg-[#1a1814] border border-[#cda45e]/30 rounded-2xl p-8 sm:p-10 text-center max-w-3xl mx-auto shadow-2xl">
+      <h3 class="text-2xl sm:text-3xl font-serif text-white mb-3">
+        Sẵn Sàng Khám Phá Thực Đơn Của <span class="text-[#cda45e]">Restaurantly</span>?
+      </h3>
+      <p class="text-sm text-[#bab8b2] mb-6 max-w-xl mx-auto">
+        Hãy đăng nhập vào tài khoản của bạn hoặc tạo tài khoản mới chỉ trong 30 giây để truy cập vào Trang Chủ và tra cứu toàn bộ thực đơn nhà hàng.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="/login" class="btn btn-gold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full font-bold">
+          Đăng Nhập Vào Trang Chủ
+        </a>
+        <a href="/register" class="btn btn-outline-gold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full font-semibold">
+          Đăng Ký Tài Khoản Mới
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
