@@ -27,9 +27,10 @@ function verifyCsrfToken(req, res, next) {
   }
 
   // 1. Kiểm tra Origin header nếu trình duyệt gửi kèm (chặn request từ trang web/origin khác)
+  // Lưu ý: Các trang đặt header Referrer-Policy: no-referrer (như GET /reset) sẽ khiến trình duyệt gửi Origin: "null"
   const origin = req.get('origin');
   const host = req.get('host');
-  if (origin && host) {
+  if (origin && origin !== 'null' && host) {
     try {
       const originHost = new URL(origin).host;
       if (originHost !== host) {

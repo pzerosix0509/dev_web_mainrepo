@@ -167,7 +167,7 @@ exports.postRegister = async (req, res, next) => {
       errors.push(pwdError);
     }
 
-    if (confirmPassword !== undefined && password !== confirmPassword) {
+    if (!confirmPassword || String(password) !== String(confirmPassword)) {
       errors.push('Mật khẩu xác nhận không khớp.');
     }
 
@@ -792,7 +792,7 @@ exports.postResetPassword = async (req, res, next) => {
     if (pwdError) {
       errors.push(pwdError);
     }
-    if (confirmPassword !== undefined && password !== confirmPassword) {
+    if (!confirmPassword || String(password) !== String(confirmPassword)) {
       errors.push('Mật khẩu xác nhận không khớp.');
     }
 
