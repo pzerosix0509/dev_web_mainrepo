@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+*.log
+coverage/
+playwright-report/
+test-results/
+.DS_Store
+apps/api/prisma/*.db
+tmp/

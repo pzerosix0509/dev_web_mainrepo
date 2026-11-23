@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/types.ts","./src/components/deepzoomviewer.tsx","./src/components/responsiveimage.test.tsx","./src/components/responsiveimage.tsx","./src/components/uploadpanel.tsx","./src/pages/gallerypage.tsx","./src/pages/photopage.tsx"],"version":"5.9.3"}
