@@ -1,0 +1,14 @@
+{
+  "identities": [
+    {
+      "name": "photo-gallery-development",
+      "credentials": [
+        {
+          "accessKey": "development-only",
+          "secretKey": "development-only"
+        }
+      ],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

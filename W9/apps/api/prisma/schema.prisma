@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PhotoStatus {
+  PROCESSING
+  READY
+  FAILED
+  DELETING
+  DELETED
+}
+
+enum VariantKind {
+  THUMB
+  MEDIUM
+  LARGE
+  TILE
+  PREVIEW
+}
+
+model Photo {
+  id               String         @id @default(uuid()) @db.Uuid
+  originalName     String
+  status           PhotoStatus    @default(PROCESSING)
+  detectedMimeType String
+  width            Int
+  height           Int
+  altText          String
+  currentVersion   Int            @default(1)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime?
+  versions         PhotoVersion[]
+
+  @@index([status, createdAt(sort: Desc)])
+}
+
+model PhotoVersion {
+  id                    String         @id @default(uuid()) @db.Uuid
+  photoId               String         @db.Uuid
+  version               Int
+  normalizedOriginalKey String
+  manifestKey           String?
+  createdAt             DateTime       @default(now())
+  publishedAt           DateTime?
+  photo                  Photo          @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  variants               PhotoVariant[]
+
+  @@unique([photoId, version])
+}
+
+model PhotoVariant {
+  id             String       @id @default(uuid()) @db.Uuid
+  photoVersionId String       @db.Uuid
+  kind           VariantKind
+  storageKey     String       @unique
+  mimeType       String
+  width          Int
+  height         Int
+  byteSize       Int
+  checksum       String?
+  tileLevel      Int?
+  tileX          Int?
+  tileY          Int?
+  photoVersion   PhotoVersion @relation(fields: [photoVersionId], references: [id], onDelete: Cascade)
+
+  @@index([photoVersionId, kind])
+}
+
+model CleanupJob {
+  id          String   @id @default(uuid()) @db.Uuid
+  photoId     String?  @db.Uuid
+  storageKeys String[]
+  attempts    Int      @default(0)
+  lastError   String?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

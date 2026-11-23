@@ -1,0 +1,2 @@
+- Với các ảnh có tổng dung lượng lớn, có thể chia ảnh thành từng phần (Ví dụ: 20MB chia thành 10 phần) và thực hiện load từng phần
+- Phải đối chiếu kiểu file, chữ ký file với chữ ký file ảnh

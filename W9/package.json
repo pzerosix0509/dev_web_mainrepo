@@ -1,0 +1,34 @@
+{
+  "name": "seaweed-photo-gallery",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w @gallery/api\" \"npm run dev -w @gallery/web\"",
+    "build": "npm run build -w @gallery/api && npm run build -w @gallery/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint apps --max-warnings=0",
+    "test": "npm run test --workspaces --if-present",
+    "db:generate": "npm run db:generate -w @gallery/api",
+    "db:migrate": "npm run db:migrate -w @gallery/api --",
+    "infra:up": "docker compose up -d postgres redis seaweedfs-master seaweedfs-volume seaweedfs-filer seaweedfs-s3",
+    "infra:logs": "docker compose logs -f seaweedfs-master seaweedfs-volume seaweedfs-filer seaweedfs-s3",
+    "infra:restart": "docker compose restart",
+    "infra:down": "docker compose down",
+    "storage:bootstrap": "node scripts/storage.mjs bootstrap",
+    "storage:verify": "node scripts/storage.mjs verify",
+    "fixtures:generate": "node scripts/generate-fixtures.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.22.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.0.0",
+    "typescript-eslint": "^8.26.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.750.0",
+    "dotenv": "^16.4.7"
+  }
+}
